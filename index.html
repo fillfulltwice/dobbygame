@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐕 Dobby's Absurd Alchemy</title>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/animations.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/themes.css">
+</head>
+<body>
+    <div id="app" class="game-container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="game-title" data-i18n="game.title">🐕 Dobby's Absurd Alchemy</h1>
+            <p class="game-subtitle" data-i18n="game.subtitle">Создавай невозможное с помощью безумного AI-алхимика!</p>
+            
+            <!-- Language Switcher -->
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="ru">RU</button>
+                <button class="lang-btn" data-lang="en">EN</button>
+            </div>
+        </header>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar"></div>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs" id="navigationTabs"></nav>
+
+        <!-- Main Content -->
+        <main id="mainContent">
+            <!-- Game Tab -->
+            <div id="gameTab" class="tab-content active"></div>
+            
+            <!-- Shop Tab -->
+            <div id="shopTab" class="tab-content"></div>
+            
+            <!-- Tree Tab -->
+            <div id="treeTab" class="tab-content"></div>
+            
+            <!-- Leaderboard Tab -->
+            <div id="leaderboardTab" class="tab-content"></div>
+        </main>
+
+        <!-- Modals -->
+        <div id="modals">
+            <!-- Welcome Modal -->
+            <div id="welcomeModal" class="modal"></div>
+            
+            <!-- Unlock Modal -->
+            <div id="unlockModal" class="modal"></div>
+            
+            <!-- Settings Modal -->
+            <div id="settingsModal" class="modal"></div>
+        </div>
+
+        <!-- Floating Messages -->
+        <div id="floatingMessages"></div>
+    </div>
+
+    <!-- JavaScript Modules -->
+    <script type="module">
+        import { Game } from './js/core/game.js';
+        import { initializeApp } from './js/core/app.js';
+        
+        // Initialize the game when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            window.game = new Game();
+            initializeApp();
+        });
+    </script>
+</body>
+</html>

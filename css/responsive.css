@@ -1,0 +1,794 @@
+/* ===== RESPONSIVE.CSS - АДАПТИВНЫЕ СТИЛИ ДЛЯ DOBBY'S ALCHEMY ===== */
+
+/* ===== БАЗОВЫЕ ПЕРЕМЕННЫЕ ДЛЯ АДАПТИВНОСТИ ===== */
+:root {
+    --container-padding: 20px;
+    --panel-padding: 25px;
+    --element-size: 1fr;
+    --font-size-title: 3.5em;
+    --font-size-panel: 1.8em;
+    --font-size-stat: 1.8em;
+    --gap-main: 25px;
+    --gap-grid: 10px;
+    --avatar-size: 150px;
+    --craft-slots: repeat(4, 1fr);
+    --inventory-grid: repeat(4, 1fr);
+    --shop-grid: repeat(4, 1fr);
+}
+
+/* ===== ЭКСТРА БОЛЬШИЕ ЭКРАНЫ (1800px+) ===== */
+@media (min-width: 1800px) {
+    :root {
+        --container-padding: 30px;
+        --panel-padding: 35px;
+        --font-size-title: 4em;
+        --font-size-panel: 2em;
+        --gap-main: 35px;
+        --avatar-size: 180px;
+    }
+
+    .game-container {
+        max-width: 1800px;
+        padding: var(--container-padding);
+    }
+
+    .inventory-grid, .shop-grid {
+        grid-template-columns: repeat(5, 1fr);
+    }
+
+    .element-icon {
+        font-size: 2.5em;
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 4.5em;
+    }
+}
+
+/* ===== БОЛЬШИЕ ЭКРАНЫ (1400px - 1799px) ===== */
+@media (min-width: 1400px) and (max-width: 1799px) {
+    .main-content {
+        grid-template-columns: 320px 1fr 400px;
+        gap: 30px;
+    }
+
+    .panel {
+        padding: 30px;
+    }
+
+    .element-icon {
+        font-size: 2.3em;
+    }
+}
+
+/* ===== СРЕДНИЕ ЭКРАНЫ (1200px - 1399px) ===== */
+@media (min-width: 1200px) and (max-width: 1399px) {
+    :root {
+        --font-size-title: 3.2em;
+        --gap-main: 20px;
+    }
+
+    .main-content {
+        grid-template-columns: 280px 1fr 360px;
+    }
+
+    .dobby-avatar {
+        width: 130px;
+        height: 130px;
+        font-size: 3.5em;
+    }
+}
+
+/* ===== ПЛАНШЕТЫ В АЛЬБОМНОЙ ОРИЕНТАЦИИ (992px - 1199px) ===== */
+@media (min-width: 992px) and (max-width: 1199px) {
+    :root {
+        --font-size-title: 2.8em;
+        --panel-padding: 20px;
+        --gap-main: 15px;
+        --avatar-size: 120px;
+    }
+
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: var(--gap-main);
+    }
+
+    .panel {
+        margin-bottom: 15px;
+    }
+
+    .stats-bar {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .stat-item {
+        min-width: 110px;
+        padding: 12px 20px;
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 3em;
+    }
+
+    .inventory-grid, .shop-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+}
+
+/* ===== ПЛАНШЕТЫ В ПОРТРЕТНОЙ ОРИЕНТАЦИИ (768px - 991px) ===== */
+@media (min-width: 768px) and (max-width: 991px) {
+    :root {
+        --container-padding: 15px;
+        --font-size-title: 2.4em;
+        --font-size-panel: 1.6em;
+        --font-size-stat: 1.6em;
+        --panel-padding: 20px;
+        --gap-main: 15px;
+        --avatar-size: 110px;
+        --inventory-grid: repeat(3, 1fr);
+        --shop-grid: repeat(3, 1fr);
+    }
+
+    .game-container {
+        padding: var(--container-padding);
+    }
+
+    .main-content {
+        grid-template-columns: 1fr;
+        gap: var(--gap-main);
+    }
+
+    .stats-bar {
+        padding: 15px;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .stat-item {
+        min-width: 140px;
+        padding: 10px 15px;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-stat);
+    }
+
+    .panel {
+        padding: var(--panel-padding);
+        margin-bottom: 15px;
+    }
+
+    .panel-title {
+        font-size: var(--font-size-panel);
+        margin-bottom: 15px;
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 2.8em;
+        margin-bottom: 15px;
+    }
+
+    .dobby-mood {
+        font-size: 2em;
+        top: -10px;
+        right: 20px;
+    }
+
+    .inventory-grid, .shop-grid {
+        grid-template-columns: var(--inventory-grid);
+        gap: 8px;
+        max-height: 350px;
+    }
+
+    .element-icon {
+        font-size: 2em;
+    }
+
+    .element-name {
+        font-size: 0.7em;
+    }
+
+    .crafting-slots {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+
+    .craft-slot {
+        font-size: 1.8em;
+    }
+
+    .craft-button {
+        padding: 15px;
+        font-size: 1.2em;
+    }
+
+    .tabs {
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tab {
+        padding: 10px 20px;
+        font-size: 1em;
+    }
+
+    .chat-input {
+        padding: 10px 12px;
+        font-size: 0.95em;
+    }
+
+    .chat-button {
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    .floating-text {
+        font-size: 1.1em;
+        padding: 12px 25px;
+    }
+}
+
+/* ===== МОБИЛЬНЫЕ УСТРОЙСТВА В АЛЬБОМНОЙ ОРИЕНТАЦИИ (576px - 767px) ===== */
+@media (min-width: 576px) and (max-width: 767px) {
+    :root {
+        --container-padding: 12px;
+        --font-size-title: 2em;
+        --font-size-panel: 1.4em;
+        --font-size-stat: 1.4em;
+        --panel-padding: 15px;
+        --gap-main: 12px;
+        --avatar-size: 100px;
+        --inventory-grid: repeat(3, 1fr);
+        --shop-grid: repeat(3, 1fr);
+        --craft-slots: repeat(2, 1fr);
+    }
+
+    .header {
+        padding: 20px 15px;
+        margin-bottom: 20px;
+    }
+
+    .game-title {
+        font-size: var(--font-size-title);
+        margin-bottom: 8px;
+    }
+
+    .header p {
+        font-size: 1em;
+    }
+
+    .header p:last-child {
+        font-size: 0.8em;
+        margin-top: 8px;
+    }
+
+    .stats-bar {
+        padding: 12px;
+        gap: 8px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .stat-item {
+        min-width: calc(33.333% - 8px);
+        padding: 8px 12px;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 0.8em;
+        margin-bottom: 3px;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-stat);
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 2.5em;
+        margin-bottom: 12px;
+    }
+
+    .dobby-mood {
+        font-size: 1.8em;
+        top: -8px;
+        right: 15px;
+    }
+
+    .loyalty-bar, .trust-bar {
+        height: 16px;
+        margin-bottom: 8px;
+    }
+
+    .crafting-slots {
+        grid-template-columns: var(--craft-slots);
+        gap: 8px;
+        margin-bottom: 20px;
+    }
+
+    .craft-slot {
+        font-size: 1.6em;
+    }
+
+    .craft-button {
+        padding: 12px;
+        font-size: 1.1em;
+    }
+
+    .element-icon {
+        font-size: 1.8em;
+    }
+
+    .element-name {
+        font-size: 0.65em;
+    }
+
+    .inventory-grid, .shop-grid {
+        grid-template-columns: var(--inventory-grid);
+        gap: 6px;
+        max-height: 280px;
+    }
+
+    .tabs {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tab {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .chat-input {
+        padding: 8px 10px;
+        font-size: 0.9em;
+    }
+
+    .chat-button {
+        padding: 8px;
+        font-size: 0.95em;
+    }
+
+    .chat-response {
+        min-height: 100px;
+        max-height: 150px;
+        padding: 12px;
+        font-size: 0.9em;
+    }
+
+    .reward-items {
+        gap: 8px;
+    }
+
+    .reward-item {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .floating-text {
+        font-size: 1em;
+        padding: 10px 20px;
+    }
+}
+
+/* ===== МОБИЛЬНЫЕ УСТРОЙСТВА В ПОРТРЕТНОЙ ОРИЕНТАЦИИ (до 575px) ===== */
+@media (max-width: 575px) {
+    :root {
+        --container-padding: 10px;
+        --font-size-title: 1.8em;
+        --font-size-panel: 1.2em;
+        --font-size-stat: 1.2em;
+        --panel-padding: 12px;
+        --gap-main: 10px;
+        --avatar-size: 80px;
+        --inventory-grid: repeat(2, 1fr);
+        --shop-grid: repeat(2, 1fr);
+        --craft-slots: repeat(2, 1fr);
+    }
+
+    .header {
+        padding: 15px 10px;
+        margin-bottom: 15px;
+    }
+
+    .game-title {
+        font-size: var(--font-size-title);
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        font-size: 0.9em;
+    }
+
+    .header p:last-child {
+        font-size: 0.7em;
+        margin-top: 5px;
+    }
+
+    .stats-bar {
+        padding: 10px;
+        gap: 6px;
+        flex-direction: column;
+    }
+
+    .stat-item {
+        min-width: 100%;
+        padding: 6px 12px;
+        margin-bottom: 6px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    .stat-label {
+        font-size: 0.75em;
+        margin-bottom: 0;
+    }
+
+    .stat-value {
+        font-size: var(--font-size-stat);
+    }
+
+    .tabs {
+        gap: 6px;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+    }
+
+    .tab {
+        padding: 6px 12px;
+        font-size: 0.8em;
+        flex: 1;
+        min-width: calc(50% - 3px);
+    }
+
+    .panel {
+        padding: var(--panel-padding);
+        margin-bottom: 12px;
+    }
+
+    .panel-title {
+        font-size: var(--font-size-panel);
+        margin-bottom: 12px;
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .dobby-mood {
+        font-size: 1.5em;
+        top: -5px;
+        right: 10px;
+    }
+
+    .loyalty-bar, .trust-bar {
+        height: 12px;
+        margin-bottom: 6px;
+    }
+
+    .inventory-grid, .shop-grid {
+        grid-template-columns: var(--inventory-grid);
+        gap: 6px;
+        max-height: 200px;
+    }
+
+    .element-icon {
+        font-size: 1.5em;
+    }
+
+    .element-name {
+        font-size: 0.6em;
+    }
+
+    .element-count {
+        font-size: 0.7em;
+        padding: 1px 4px;
+    }
+
+    .shop-price {
+        font-size: 0.7em;
+        padding: 1px 4px;
+    }
+
+    .crafting-slots {
+        grid-template-columns: var(--craft-slots);
+        gap: 6px;
+        margin-bottom: 15px;
+    }
+
+    .craft-slot {
+        font-size: 1.4em;
+    }
+
+    .craft-button {
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    .chat-input {
+        padding: 6px 8px;
+        font-size: 0.85em;
+        margin-bottom: 8px;
+    }
+
+    .chat-button {
+        padding: 6px;
+        font-size: 0.9em;
+    }
+
+    .chat-response {
+        min-height: 80px;
+        max-height: 120px;
+        padding: 10px;
+        font-size: 0.8em;
+        margin-top: 10px;
+    }
+
+    .reward-items {
+        gap: 6px;
+        margin-top: 10px;
+    }
+
+    .reward-item {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+
+    .dobby-request {
+        padding: 10px;
+        margin-top: 10px;
+    }
+
+    .dobby-request-button {
+        padding: 6px 15px;
+        font-size: 0.9em;
+    }
+
+    .content-section {
+        padding: 15px;
+    }
+
+    .modal-content, .welcome-content {
+        padding: 20px;
+        max-width: 90%;
+        margin: 20px;
+    }
+
+    .welcome-input {
+        padding: 10px;
+        margin: 15px 0;
+        font-size: 1em;
+    }
+
+    .leaderboard-entry {
+        padding: 10px;
+        font-size: 0.9em;
+    }
+
+    .floating-text {
+        font-size: 0.9em;
+        padding: 8px 15px;
+    }
+
+    .loading {
+        width: 15px;
+        height: 15px;
+        border-width: 2px;
+    }
+}
+
+/* ===== ЭКСТРА МЕЛКИЕ ЭКРАНЫ (до 360px) ===== */
+@media (max-width: 360px) {
+    :root {
+        --font-size-title: 1.5em;
+        --font-size-panel: 1em;
+        --font-size-stat: 1em;
+        --panel-padding: 8px;
+        --avatar-size: 60px;
+    }
+
+    .game-container {
+        padding: 8px;
+    }
+
+    .header {
+        padding: 10px 8px;
+    }
+
+    .stats-bar {
+        padding: 8px;
+    }
+
+    .stat-item {
+        padding: 4px 8px;
+        font-size: 0.8em;
+    }
+
+    .dobby-avatar {
+        width: var(--avatar-size);
+        height: var(--avatar-size);
+        font-size: 1.8em;
+    }
+
+    .crafting-slots {
+        gap: 4px;
+    }
+
+    .craft-slot {
+        font-size: 1.2em;
+    }
+
+    .element-icon {
+        font-size: 1.2em;
+    }
+
+    .element-name {
+        font-size: 0.55em;
+    }
+
+    .tab {
+        padding: 4px 8px;
+        font-size: 0.75em;
+    }
+}
+
+/* ===== ВЫСОТА ЭКРАНА (Landscape на телефонах) ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+    .header {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+
+    .game-title {
+        font-size: 1.8em;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        font-size: 0.8em;
+        margin: 2px 0;
+    }
+
+    .stats-bar {
+        padding: 8px;
+        gap: 5px;
+    }
+
+    .stat-item {
+        padding: 5px 10px;
+        min-width: auto;
+        flex: 1;
+    }
+
+    .stat-label {
+        font-size: 0.7em;
+    }
+
+    .stat-value {
+        font-size: 1em;
+    }
+
+    .panel {
+        padding: 10px;
+    }
+
+    .panel-title {
+        font-size: 1em;
+        margin-bottom: 8px;
+    }
+
+    .dobby-avatar {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8em;
+        margin-bottom: 8px;
+    }
+
+    .chat-response {
+        min-height: 60px;
+        max-height: 80px;
+        font-size: 0.75em;
+    }
+
+    .inventory-grid, .shop-grid {
+        max-height: 150px;
+    }
+
+    .crafting-slots {
+        margin-bottom: 10px;
+    }
+
+    .tabs {
+        margin-bottom: 10px;
+    }
+
+    .content-section {
+        padding: 15px;
+    }
+}
+
+/* ===== УТИЛИТЫ ДЛЯ АДАПТИВНОСТИ ===== */
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .mobile-only {
+        display: block;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+}
+
+/* ===== АДАПТИВНАЯ ТИПОГРАФИКА ===== */
+@media (max-width: 768px) {
+    .game-container {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        font-size: 13px;
+    }
+}
+
+/* ===== УЛУЧШЕНИЯ ДЛЯ СЕНСОРНЫХ УСТРОЙСТВ ===== */
+@media (hover: none) and (pointer: coarse) {
+    .element-item, .shop-item, .craft-slot, .tab, .chat-button, .reward-item {
+        min-height: 44px;
+        min-width: 44px;
+    }
+
+    .stat-item {
+        min-height: 40px;
+    }
+
+    .dobby-request-button {
+        min-height: 40px;
+        min-width: 100px;
+    }
+}
+
+/* ===== ПРИНТ СТИЛИ ===== */
+@media print {
+    .game-container {
+        background: white;
+        color: black;
+    }
+
+    .header, .stats-bar, .panel {
+        background: white;
+        border: 1px solid #ccc;
+        box-shadow: none;
+    }
+
+    .tabs, .chat-section, .reward-items {
+        display: none;
+    }
+}

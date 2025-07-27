@@ -1,0 +1,312 @@
+/* css/animations.css */
+
+/* Keyframe Animations */
+@keyframes glow {
+    from { 
+        filter: brightness(1);
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.5);
+    }
+    to { 
+        filter: brightness(1.2);
+        text-shadow: 3px 3px 12px rgba(255, 215, 0, 0.5);
+    }
+}
+
+@keyframes float {
+    0%, 100% { 
+        transform: translateY(0px) rotate(-2deg);
+    }
+    50% { 
+        transform: translateY(-15px) rotate(2deg);
+    }
+}
+
+@keyframes spin {
+    to { 
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -150%);
+    }
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.7;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+@keyframes sparkle {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(0);
+    }
+}
+
+/* Dobby Avatar Animations */
+.dobby-avatar {
+    animation: float 3s ease-in-out infinite;
+    transition: all 0.5s ease;
+}
+
+.dobby-avatar.happy {
+    animation: float 2s ease-in-out infinite, pulse 4s ease-in-out infinite;
+}
+
+.dobby-avatar.angry {
+    animation: shake 0.5s ease-in-out infinite;
+}
+
+.dobby-avatar.excited {
+    animation: bounce 1s ease-in-out infinite;
+}
+
+/* Element Unlock Animation */
+.element-unlock {
+    animation: bounce 0.6s ease-out, sparkle 1s ease-out;
+}
+
+/* Crafting Animation */
+.crafting-active {
+    position: relative;
+    overflow: hidden;
+}
+
+.crafting-active::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
+    animation: spin 2s linear infinite;
+}
+
+/* Success Animation */
+.success-pulse {
+    animation: pulse 0.5s ease-out;
+}
+
+/* Error Animation */
+.error-shake {
+    animation: shake 0.5s ease-out;
+}
+
+/* Level Up Animation */
+.level-up-effect {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5em;
+    color: var(--gold);
+    animation: levelUp 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 3000;
+}
+
+@keyframes levelUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.5);
+    }
+    50% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -200%) scale(1);
+    }
+}
+
+/* Hover Effects */
+.hover-lift {
+    transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+    transform: translateY(-5px);
+}
+
+.hover-grow {
+    transition: transform 0.3s ease;
+}
+
+.hover-grow:hover {
+    transform: scale(1.05);
+}
+
+.hover-glow {
+    transition: box-shadow 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+/* Click Animation */
+.click-scale {
+    transition: transform 0.1s ease;
+}
+
+.click-scale:active {
+    transform: scale(0.95);
+}
+
+/* Progress Bar Animations */
+.progress-fill {
+    transition: width 0.5s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    to {
+        left: 100%;
+    }
+}
+
+/* Particle Effects */
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--gold);
+    border-radius: 50%;
+    animation: particle-float 3s ease-out forwards;
+}
+
+@keyframes particle-float {
+    0% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) scale(0);
+    }
+}
+
+/* Special Effects */
+.rainbow-text {
+    background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: rainbow-shift 3s linear infinite;
+}
+
+@keyframes rainbow-shift {
+    to {
+        background-position: 100% 0;
+    }
+}
+
+/* Dobby Mood Transitions */
+.dobby-mood {
+    transition: all 0.5s ease;
+}
+
+.dobby-mood.happy {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+.dobby-mood.angry {
+    transform: scale(0.9);
+    filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
+}
+
+.dobby-mood.loving {
+    transform: scale(1.3);
+    filter: drop-shadow(0 0 15px rgba(255, 20, 147, 0.5));
+    animation: pulse 1s ease-in-out infinite;
+}
