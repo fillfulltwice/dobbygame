@@ -13,10 +13,18 @@
 </head>
 <body>
     <div id="app" class="game-container">
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Загрузка игры...</div>
+            <div class="loading-subtext">Dobby готовит безумие...</div>
+        </div>
+
         <!-- Header -->
         <header class="header">
             <h1 class="game-title" data-i18n="game.title">🐕 Dobby's Absurd Alchemy</h1>
             <p class="game-subtitle" data-i18n="game.subtitle">Создавай невозможное с помощью безумного AI-алхимика!</p>
+            <p data-i18n="game.powered_by">На базе Sentient AI: dobby-unhinged-llama-3-3-70b</p>
             
             <!-- Language Switcher -->
             <div class="language-switcher">
@@ -26,36 +34,126 @@
         </header>
 
         <!-- Stats Bar -->
-        <div class="stats-bar" id="statsBar"></div>
+        <div class="stats-bar" id="statsBar">
+            <!-- Заполняется динамически -->
+        </div>
 
         <!-- Navigation Tabs -->
-        <nav class="tabs" id="navigationTabs"></nav>
+        <nav class="tabs" id="navigationTabs">
+            <!-- Заполняется динамически -->
+        </nav>
 
         <!-- Main Content -->
         <main id="mainContent">
             <!-- Game Tab -->
-            <div id="gameTab" class="tab-content active"></div>
+            <div id="gameTab" class="tab-content active main-content">
+                <!-- Inventory Panel -->
+                <div class="panel" id="inventory">
+                    <h3 class="panel-title" data-i18n="panels.inventory">📦 Инвентарь</h3>
+                    <div class="inventory-filters">
+                        <button class="inventory-filter active" data-category="all">Все</button>
+                        <button class="inventory-filter" data-category="basic">Базовые</button>
+                        <button class="inventory-filter" data-category="craftable">Созданные</button>
+                    </div>
+                    <input type="text" id="inventorySearch" class="inventory-search" placeholder="Поиск элементов...">
+                    <div class="inventory-grid" id="inventory-grid">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+                
+                <!-- Crafting Panel -->
+                <div class="panel" id="crafting">
+                    <h3 class="panel-title" data-i18n="panels.crafting">🔨 Мастерская абсурда</h3>
+                    <div class="crafting-slots" id="crafting-slots">
+                        <!-- Заполняется динамически -->
+                    </div>
+                    <button class="btn btn-primary craft-button" id="craft-button" data-i18n="crafting.mix_button">
+                        ✨ Смешать безумие ✨
+                    </button>
+                    <div class="crafting-hint" id="crafting-hint"></div>
+                </div>
+                
+                <!-- Dobby Panel -->
+                <div class="panel" id="dobby">
+                    <h3 class="panel-title" data-i18n="panels.dobby">🐕 Dobby AI Assistant</h3>
+                    <div class="dobby-container">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
             
             <!-- Shop Tab -->
-            <div id="shopTab" class="tab-content"></div>
+            <div id="shopTab" class="tab-content">
+                <div class="panel" id="shop">
+                    <h3 class="panel-title" data-i18n="panels.shop_title">🏪 Dobby Shop - Магазин безумия</h3>
+                    <div class="shop-container">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
             
             <!-- Tree Tab -->
-            <div id="treeTab" class="tab-content"></div>
+            <div id="treeTab" class="tab-content">
+                <div class="panel">
+                    <h3 class="panel-title">🌳 Древо элементов</h3>
+                    <div class="tree-container">
+                        <p style="text-align: center; font-size: 1.5em; margin-top: 50px;">🚧 В разработке 🚧</p>
+                        <p style="text-align: center;">Здесь будет красивое древо всех элементов!</p>
+                    </div>
+                </div>
+            </div>
             
             <!-- Leaderboard Tab -->
-            <div id="leaderboardTab" class="tab-content"></div>
+            <div id="leaderboardTab" class="tab-content">
+                <div class="panel">
+                    <h3 class="panel-title" data-i18n="leaderboard.title">🏆 Лидерборд</h3>
+                    <div class="leaderboard-list" id="leaderboard-list">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Settings Tab -->
+            <div id="settingsTab" class="tab-content">
+                <div class="panel">
+                    <h3 class="panel-title" data-i18n="tabs.settings">⚙️ Настройки</h3>
+                    <div class="settings-container">
+                        <!-- Заполняется динамически -->
+                    </div>
+                </div>
+            </div>
         </main>
 
         <!-- Modals -->
         <div id="modals">
             <!-- Welcome Modal -->
-            <div id="welcomeModal" class="modal"></div>
+            <div id="welcomeModal" class="modal">
+                <div class="modal-content welcome-content">
+                    <h2 data-i18n="modals.welcome.title">🐕 Добро пожаловать!</h2>
+                    <p data-i18n="modals.welcome.subtitle">Как тебя зовут, юный алхимик?</p>
+                    <input type="text" class="welcome-input" id="playerNameInput" data-i18n-placeholder="modals.welcome.name_placeholder">
+                    <button class="btn btn-primary" id="startGameBtn" data-i18n="modals.welcome.start_button">
+                        Начать приключение!
+                    </button>
+                </div>
+            </div>
             
             <!-- Unlock Modal -->
-            <div id="unlockModal" class="modal"></div>
+            <div id="unlockModal" class="modal">
+                <div class="modal-content">
+                    <h2 data-i18n="modals.unlock.title">🎉 Новый элемент открыт!</h2>
+                    <div class="unlock-icon" id="unlock-icon"></div>
+                    <h3 class="unlock-name" id="unlock-name"></h3>
+                    <button class="btn btn-primary" id="closeUnlockBtn" data-i18n="modals.unlock.button">
+                        Отлично!
+                    </button>
+                </div>
+            </div>
             
             <!-- Settings Modal -->
-            <div id="settingsModal" class="modal"></div>
+            <div id="settingsModal" class="modal">
+                <!-- Заполняется динамически -->
+            </div>
         </div>
 
         <!-- Floating Messages -->
@@ -64,14 +162,27 @@
 
     <!-- JavaScript Modules -->
     <script type="module">
-        import { Game } from './js/core/game.js';
+        // Импортируем главный модуль приложения
         import { initializeApp } from './js/core/app.js';
         
-        // Initialize the game when DOM is ready
-        document.addEventListener('DOMContentLoaded', () => {
-            window.game = new Game();
+        // Ждем загрузки DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeApp);
+        } else {
+            // DOM уже загружен
             initializeApp();
-        });
+        }
+    </script>
+
+    <!-- Fallback для браузеров без поддержки модулей -->
+    <script nomodule>
+        document.body.innerHTML = `
+            <div style="padding: 50px; text-align: center;">
+                <h1>⚠️ Браузер не поддерживается</h1>
+                <p>Для игры требуется современный браузер с поддержкой ES6 модулей.</p>
+                <p>Пожалуйста, обновите браузер или используйте Chrome, Firefox, Safari или Edge.</p>
+            </div>
+        `;
     </script>
 </body>
 </html>

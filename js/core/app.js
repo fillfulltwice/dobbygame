@@ -3,8 +3,7 @@ import { Game } from './game.js';
 import { UI } from '../components/ui.js';
 import { EventSystem } from './events.js';
 import { DOM } from '../utils/helpers.js';
-import { initTranslations, updatePageTranslations } from '../data/translations.js';
-
+import { t, getCurrentLanguage, setLanguage, updatePageTranslations, initTranslations } from '../data/translations.js';
 export class App {
     constructor() {
         this.game = null;
@@ -641,16 +640,10 @@ export function initApp() {
     return app;
 }
 
-// Автоматическая инициализация при загрузке DOM
-if (typeof document !== 'undefined') {
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            const gameApp = initApp();
-            gameApp.init();
-        });
-    } else {
-        // DOM уже загружен
-        const gameApp = initApp();
+// Экспортируем функцию инициализации
+export function initializeApp() {
+    const gameApp = initApp();
+    if (gameApp) {
         gameApp.init();
     }
 }

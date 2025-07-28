@@ -100,6 +100,7 @@ export const TRANSLATIONS = {
         },
         
         leaderboard: {
+            title: '🏆 Лидерборд',
             titles: {
                 1: 'Начинающий Алхимик',
                 5: 'Друг Dobby',
@@ -117,7 +118,39 @@ export const TRANSLATIONS = {
             loyalty_gained: '+{amount} лояльности!',
             api_key_required: 'Введите ваш API ключ для Fireworks AI:',
             api_error: 'Гав! *Dobby чихнул* Что-то пошло не так... Проверь API ключ!'
-        }
+        },
+        
+        settings: {
+            language: 'Язык',
+            theme: 'Тема',
+            themes: {
+                light: 'Светлая',
+                dark: 'Тёмная',
+                auto: 'Авто'
+            },
+            autosave: 'Автосохранение',
+            notifications: 'Уведомления',
+            export: 'Экспорт сохранения',
+            import: 'Импорт сохранения',
+            reset: 'Сбросить игру',
+            importSuccess: 'Сохранение успешно импортировано!',
+            importError: 'Ошибка при импорте сохранения',
+            resetConfirm: 'Вы уверены? Весь прогресс будет потерян!',
+            resetSuccess: 'Игра сброшена'
+        },
+        
+        production: {
+            count: 'Количество',
+            rate: 'Скорость'
+        },
+        
+        currency: {
+            coins: 'монеты'
+        },
+        
+        items: {},
+        buildings: {},
+        resources: {}
     },
     
     en: {
@@ -220,6 +253,7 @@ export const TRANSLATIONS = {
         },
         
         leaderboard: {
+            title: '🏆 Leaderboard',
             titles: {
                 1: 'Beginner Alchemist',
                 5: 'Dobby\'s Friend',
@@ -237,7 +271,39 @@ export const TRANSLATIONS = {
             loyalty_gained: '+{amount} loyalty!',
             api_key_required: 'Enter your Fireworks AI API key:',
             api_error: 'Woof! *Dobby sneezed* Something went wrong... Check the API key!'
-        }
+        },
+        
+        settings: {
+            language: 'Language',
+            theme: 'Theme',
+            themes: {
+                light: 'Light',
+                dark: 'Dark',
+                auto: 'Auto'
+            },
+            autosave: 'Autosave',
+            notifications: 'Notifications',
+            export: 'Export save',
+            import: 'Import save',
+            reset: 'Reset game',
+            importSuccess: 'Save successfully imported!',
+            importError: 'Error importing save',
+            resetConfirm: 'Are you sure? All progress will be lost!',
+            resetSuccess: 'Game reset'
+        },
+        
+        production: {
+            count: 'Count',
+            rate: 'Rate'
+        },
+        
+        currency: {
+            coins: 'coins'
+        },
+        
+        items: {},
+        buildings: {},
+        resources: {}
     }
 };
 
@@ -301,4 +367,20 @@ export function updatePageTranslations() {
         const key = element.getAttribute('data-i18n-placeholder');
         element.placeholder = t(key);
     });
+}
+
+// Инициализация переводов
+export async function initTranslations() {
+    // Загружаем сохраненный язык
+    const savedLang = localStorage.getItem('gameLanguage');
+    if (savedLang && TRANSLATIONS[savedLang]) {
+        currentLanguage = savedLang;
+    }
+    
+    // Обновляем переводы на странице
+    updatePageTranslations();
+    
+    console.log('Translations initialized with language:', currentLanguage);
+    
+    return true;
 }
