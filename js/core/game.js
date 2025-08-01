@@ -18,7 +18,7 @@ export class Game {
             crafting: new Crafting(this),
             shop: new Shop(this),
             dobby: new Dobby(this),
-            ui: new UI(this)
+            ui: null // Will be set by app.js
         };
         
         this.isInitialized = false;

@@ -1,7 +1,7 @@
-// js/components/crafting.js
 import { t } from '../data/translations.js';
 import { DOM, Animation } from '../utils/helpers.js';
-
+import { getElement, getElementName } from '../data/elements.js';
+import { getCurrentLanguage } from '../data/translations.js';
 export class Crafting {
     constructor(game) {
         this.game = game;

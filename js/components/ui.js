@@ -1,6 +1,7 @@
 // js/components/ui.js
 import { t, getCurrentLanguage, setLanguage, updatePageTranslations } from '../data/translations.js';
 import { DOM, Animation, Numbers } from '../utils/helpers.js';
+import { getElement, getElementName } from '../data/elements.js';
 
 export class UI {
     constructor(game) {
@@ -14,7 +15,10 @@ export class UI {
         this.initStats();
         this.initModals();
         this.initLanguageSwitcher();
-        this.setupEventListeners();
+        // Откладываем setupEventListeners до полной инициализации DOM
+        setTimeout(() => {
+            this.setupEventListeners();
+        }, 100);
         this.updateStats();
     }
     
@@ -542,5 +546,103 @@ export class UI {
     updateLeaderboard() {
         // Обновление таблицы лидеров
         console.log('Updating leaderboard');
+    }
+    showFloatingText(message, isError = false) {
+        const floatingText = DOM.create('div', 'floating-text');
+        if (isError) floatingText.classList.add('error');
+        floatingText.textContent = message;
+        
+        const container = DOM.get('floatingMessages') || document.body;
+        container.appendChild(floatingText);
+        
+        setTimeout(() => {
+            floatingText.remove();
+        }, 1500);
+    }
+    
+    showWelcomeModal() {
+        const modal = DOM.get('welcomeModal');
+        if (modal) {
+            modal.classList.add('active');
+            
+            const startBtn = DOM.get('startGameBtn');
+            const nameInput = DOM.get('playerNameInput');
+            
+            if (startBtn && nameInput) {
+                DOM.on(startBtn, 'click', () => {
+                    const name = nameInput.value.trim();
+                    if (name) {
+                        this.game.state.playerName = name;
+                        modal.classList.remove('active');
+                        this.game.components.dobby.showGreeting();
+                        this.game.save();
+                    }
+                });
+                
+                DOM.on(nameInput, 'keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        startBtn.click();
+                    }
+                });
+            }
+        }
+    }
+    
+    showUnlockModal(elementId) {
+        const modal = DOM.get('unlockModal');
+        if (!modal) return;
+        
+        const element = getElement(elementId);
+        if (!element) return;
+        
+        const iconEl = DOM.get('unlock-icon');
+        const nameEl = DOM.get('unlock-name');
+        
+        if (iconEl) iconEl.textContent = element.icon || '❓';
+        if (nameEl) nameEl.textContent = getElementName(elementId, getCurrentLanguage());
+        
+        modal.classList.add('active');
+        
+        const closeBtn = DOM.get('closeUnlockBtn');
+        if (closeBtn) {
+            DOM.on(closeBtn, 'click', () => {
+                modal.classList.remove('active');
+            });
+        }
+    }
+    
+    showCraftResult(success, elementName = '', coinGain = 0) {
+        if (success) {
+            this.showFloatingText(`✨ ${t('crafting.success', { element: elementName })} +${coinGain} 🪙`);
+        } else {
+            this.showFloatingText(t('crafting.failed'), true);
+        }
+    }
+    
+    showLevelUp(level, rewards) {
+        const levelUpEl = DOM.create('div', 'level-up-effect');
+        levelUpEl.textContent = `🎉 ${t('messages.level_up', { 
+            level, 
+            meat: rewards.meat, 
+            bones: rewards.bones, 
+            coins: rewards.coins 
+        })}`;
+        
+        document.body.appendChild(levelUpEl);
+        
+        setTimeout(() => {
+            levelUpEl.remove();
+        }, 2000);
+    }
+    
+    showAchievement(text) {
+        this.showFloatingText(`🏆 ${text}`);
+    }
+    
+    updateAllTranslations() {
+        updatePageTranslations();
+        this.initTabs();
+        this.initStats();
+        this.updateAllContent();
     }
 }

@@ -51,23 +51,37 @@ export const DOM = {
         if (element) element.classList.toggle(className);
     },
     
-    // Добавить слушатель события
-    on(element, event, handler) {
-        if (!element || !event || !handler) return;
-        
-        // Если element это строка, получаем элемент
-        if (typeof element === 'string') {
-            element = this.get(element);
-        }
-        
-        // Проверяем что element существует и это DOM элемент
-        if (element && element.addEventListener) {
-            element.addEventListener(event, handler);
-        } else if (element === document || element === window) {
-            // Для document и window
-            element.addEventListener(event, handler);
-        }
-    },
+// Добавить слушатель события
+on(element, event, handler) {
+    if (!element || !event || !handler) return;
+    
+    // Проверяем что handler это функция
+    if (typeof handler !== 'function') {
+        console.error('Handler must be a function', handler);
+        return;
+    }
+    
+    // Если element это строка, получаем элемент
+    if (typeof element === 'string') {
+        element = this.get(element);
+    }
+    
+    // Если элемент не найден, выходим
+    if (!element) {
+        console.warn('Element not found for event listener');
+        return;
+    }
+    
+    // Проверяем что element существует и это DOM элемент
+    if (element && typeof element.addEventListener === 'function') {
+        element.addEventListener(event, handler);
+    } else if (element === document || element === window) {
+        // Для document и window
+        element.addEventListener(event, handler);
+    } else {
+        console.error('Invalid element for event listener', element);
+    }
+},
     
     // Установить текст
     text(element, text) {

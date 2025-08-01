@@ -1,6 +1,6 @@
-// js/components/shop.js
 import { t, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Numbers } from '../utils/helpers.js';
+import { getElement, getElementName } from '../data/elements.js';
 
 export class Shop {
     constructor(game) {

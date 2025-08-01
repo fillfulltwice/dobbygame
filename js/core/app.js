@@ -37,12 +37,14 @@ export class App {
             // Создание основных компонентов
             this.eventSystem = new EventSystem();
             this.game = new Game(this.eventSystem);
-            this.ui = new UI(this.game);
-            
-            // Инициализация компонентов
+    
+            // Инициализация игры сначала
             await this.game.init();
+    
+            // Затем создаем и инициализируем UI
+            this.ui = new UI(this.game);
             await this.ui.init();
-            
+    
             // Загрузка сохранения
             this.loadGame();
             
