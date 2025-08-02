@@ -33,23 +33,17 @@ export class Game {
             this.state.loadFromSave(savedData);
         }
         
-        // Initialize components
-        await this.components.ui.init();
-        await this.components.inventory.init();
-        await this.components.crafting.init();
-        await this.components.shop.init();
-        await this.components.dobby.init();
+      // Initialize game components (NOT UI)
+      await this.components.inventory.init();
+      await this.components.crafting.init();
+      await this.components.shop.init();
+      await this.components.dobby.init();
         
         // Check for daily bonus
         this.checkDailyBonus();
         
         // Set up auto-save
-        this.setupAutoSave();
-        
-        // Show welcome modal for new players
-        if (!this.state.playerName) {
-            this.components.ui.showWelcomeModal();
-        }
+        this.setupAutoSave(); 
         
         this.isInitialized = true;
         console.log('Game initialized successfully');

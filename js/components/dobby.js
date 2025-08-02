@@ -19,7 +19,6 @@ export class Dobby {
         if (!this.container) return;
         
         this.render();
-        this.setupEventListeners();
         this.showGreeting();
     }
     
@@ -49,6 +48,10 @@ export class Dobby {
         this.renderCurrentRequest();
     }
     
+    setupEventListeners() {
+        // Обработчики уже добавлены в render()
+    }
+
     renderBars() {
         const barsContainer = DOM.create('div', 'dobby-bars');
         

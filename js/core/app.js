@@ -38,15 +38,21 @@ export class App {
             this.eventSystem = new EventSystem();
             this.game = new Game(this.eventSystem);
     
-            // Инициализация игры сначала
-            await this.game.init();
-    
-            // Затем создаем и инициализируем UI
-            this.ui = new UI(this.game);
-            await this.ui.init();
-    
-            // Загрузка сохранения
-            this.loadGame();
+          // Инициализация игры сначала
+          await this.game.init();
+            
+          // Затем создаем и инициализируем UI
+          this.ui = new UI(this.game);
+          this.game.components.ui = this.ui; // Устанавливаем UI в game
+          await this.ui.init();
+          
+          // Загрузка сохранения
+          this.loadGame();
+          
+          // Проверяем нужно ли показать модальное окно приветствия
+          if (!this.game.state.playerName) {
+              this.ui.showWelcomeModal();
+          }
             
             // Обновление переводов
             updatePageTranslations();

@@ -1,5 +1,5 @@
 // js/components/ui.js
-import { t, getCurrentLanguage, setLanguage, updatePageTranslations } from '../data/translations.js';
+import { t, setLanguage, updatePageTranslations } from '../data/translations.js';
 import { DOM, Animation, Numbers } from '../utils/helpers.js';
 import { getElement, getElementName } from '../data/elements.js';
 
@@ -197,31 +197,43 @@ export class UI {
     }
     
     initStats() {
-        const statsContainer = DOM.get('gameStats');
-        if (!statsContainer) return;
+        const statsContainer = DOM.get('statsBar');
+        if (!statsContainer) {
+            console.error('Stats container not found');
+            return;
+        }
         
-        statsContainer.innerHTML = `
-            <div class="stat-item">
-                <span class="stat-label">${t('stats.coins')}</span>
-                <span class="stat-value" id="coins-display">0</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">${t('stats.level')}</span>
-                <span class="stat-value" id="level-display">1</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">${t('stats.experience')}</span>
-                <span class="stat-value" id="exp-display">0</span>
-            </div>
-        `;
+        // Очищаем и заполняем контейнер статистики
+        DOM.clear(statsContainer);
+        
+        const stats = [
+            { key: 'stats.level', id: 'level-display', value: this.game.state.level },
+            { key: 'stats.exp', id: 'exp-display', value: `${this.game.state.exp}/${this.game.state.expToNext}` },
+            { key: 'stats.coins', id: 'coins-display', value: this.game.state.coins },
+            { key: 'stats.elements', id: 'elements-display', value: this.game.state.getDiscoveredElementsCount() },
+            { key: 'stats.meat', id: 'meat-display', value: this.game.state.meat },
+            { key: 'stats.bones', id: 'bones-display', value: this.game.state.bones }
+        ];
+        
+        stats.forEach(stat => {
+            const statItem = DOM.create('div', 'stat-item');
+            statItem.innerHTML = `
+                <span class="stat-label">${t(stat.key)}</span>
+                <span class="stat-value" id="${stat.id}">${stat.value}</span>
+            `;
+            statsContainer.appendChild(statItem);
+        });
     }
     
     updateStats() {
-        const player = this.game.player;
+        const state = this.game.state;
         
-        Animation.countUp('coins-display', player.coins);
-        DOM.text('level-display', player.level);
-        DOM.text('exp-display', `${player.experience}/${player.getExpToNextLevel()}`);
+        DOM.text('level-display', state.level);
+        DOM.text('exp-display', `${state.exp}/${state.expToNext}`);
+        DOM.text('coins-display', state.coins);
+        DOM.text('elements-display', state.getDiscoveredElementsCount());
+        DOM.text('meat-display', state.meat);
+        DOM.text('bones-display', state.bones);
     }
     
     updateInventory() {
