@@ -33,14 +33,13 @@ export class Game {
             this.state.loadFromSave(savedData);
         }
         
-      // Initialize game components (NOT UI)
-      await this.components.inventory.init();
-      await this.components.crafting.init();
-      await this.components.shop.init();
-      await this.components.dobby.init();
+        // Initialize game components (NOT UI)
+        await this.components.inventory.init();
+        await this.components.crafting.init();
+        await this.components.shop.init();
+        await this.components.dobby.init();
         
-        // Check for daily bonus
-        this.checkDailyBonus();
+        // НЕ вызываем checkDailyBonus здесь - переносим позже
         
         // Set up auto-save
         this.setupAutoSave(); 
@@ -74,17 +73,29 @@ export class Game {
             this.state.meat += 2;
             this.state.bones += 3;
             
-            this.components.ui.showFloatingText(t('messages.daily_bonus'));
+            // Проверяем, что UI инициализирован
+            if (this.components.ui && this.components.ui.showFloatingText) {
+                this.components.ui.showFloatingText(t('messages.daily_bonus'));
+            }
             Storage.set('lastDailyBonus', today);
             this.updateUI();
         }
+    
     }
     
     updateUI() {
-        this.components.ui.updateStats();
-        this.components.inventory.render();
-        this.components.shop.render();
-        this.components.dobby.updateMood();
+        if (this.components.ui) {
+            this.components.ui.updateStats();
+        }
+        if (this.components.inventory) {
+            this.components.inventory.render();
+        }
+        if (this.components.shop) {
+            this.components.shop.render();
+        }
+        if (this.components.dobby) {
+            this.components.dobby.updateMood();
+        }
     }
     
     craft(ingredients) {
