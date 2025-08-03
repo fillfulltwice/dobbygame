@@ -22,7 +22,16 @@ export class Game {
         };
         
         this.isInitialized = false;
+        // Добавь эти строки после строки 23
+        this.player = {
+            inventory: {},
+            production: {},
+            resources: {},
+            canAfford: (cost) => this.state.canAfford(cost)
+        };
     }
+    
+    
     
     async init() {
         if (this.isInitialized) return;
@@ -57,11 +66,6 @@ export class Game {
         window.addEventListener('beforeunload', () => {
             this.save();
         });
-    }
-    
-    save() {
-        Storage.save(this.state.getSaveData());
-        console.log('Game saved');
     }
     
     checkDailyBonus() {
@@ -332,4 +336,46 @@ export class Game {
         this.updateUI();
         this.components.ui.updateAllTranslations();
     }
+// Добавь эти методы после строки 299 (после метода changeLanguage)
+
+update(deltaTime) {
+    // Пустой метод, но нужен для game loop
+}
+
+onFocusLost() {
+    // Вызывается когда игра теряет фокус
+}
+
+onFocusGained() {
+    // Вызывается когда игра получает фокус
+}
+
+load(saveData) {
+    if (saveData && saveData.player) {
+        this.state.loadFromSave(saveData.player);
+        return true;
+    }
+    return false;
+}
+
+save() {
+    return {
+        player: this.state.getSaveData()
+    };
+}
+
+reset() {
+    this.state.reset();
+    this.updateUI();
+}
+
+destroy() {
+    if (this.components.shop) {
+        this.components.shop.destroy();
+    }
+}
+
+getState() {
+    return this.state;
+}
 }

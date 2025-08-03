@@ -1,5 +1,5 @@
 // js/components/ui.js
-import { t, setLanguage, updatePageTranslations } from '../data/translations.js';
+import { t, setLanguage, updatePageTranslations, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation, Numbers } from '../utils/helpers.js';
 import { getElement, getElementName } from '../data/elements.js';
 
@@ -237,8 +237,9 @@ export class UI {
     }
     
     updateInventory() {
-        const inventoryContainer = DOM.get('inventory');
-        if (!inventoryContainer) return;
+        if (this.game.components.inventory) {
+            this.game.components.inventory.render();
+        }
         
         inventoryContainer.innerHTML = '';
         
@@ -254,10 +255,13 @@ export class UI {
             }
         });
     }
-    
+   
     updateProduction() {
         const productionContainer = DOM.get('production');
-        if (!productionContainer) return;
+        if (productionContainer) {
+            productionContainer.innerHTML = '<p>Система производства в разработке</p>';
+        
+    }
         
         productionContainer.innerHTML = '';
         
@@ -279,7 +283,9 @@ export class UI {
     
     updateResources() {
         const resourcesContainer = DOM.get('resources');
-        if (!resourcesContainer) return;
+        if (resourcesContainer) {
+            resourcesContainer.innerHTML = '<p>Система ресурсов в разработке</p>';
+        }
         
         resourcesContainer.innerHTML = '';
         
