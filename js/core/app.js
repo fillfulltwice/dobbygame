@@ -49,8 +49,10 @@ export class App {
 // Загрузка сохранения
             this.loadGame();
 
-// Проверяем ежедневный бонус ПОСЛЕ инициализации UI
-            this.game.checkDailyBonus();
+// Проверяем ежедневный бонус ПОСЛЕ полной инициализации компонентов
+setTimeout(() => {
+    this.game.checkDailyBonus();
+}, 100);
           
           // Проверяем нужно ли показать модальное окно приветствия
           if (!this.game.state.playerName) {

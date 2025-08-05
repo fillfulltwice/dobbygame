@@ -23,7 +23,11 @@ export class Dobby {
     }
     
     render() {
+        if (!this.container) return; // 🛡️ Защита от вызова до инициализации
+        
         DOM.clear(this.container);
+        // ... остальной код ...
+    
         
         // Аватар Dobby
         this.avatar = DOM.create('div', 'dobby-avatar');
@@ -221,13 +225,18 @@ export class Dobby {
             this.game.state.dobbyMood = 'neutral';
         }
         
+        // 🛡️ ПРОВЕРЯЕМ что контейнер инициализирован
+        if (!this.container) return;
+        
         const mood = this.container.querySelector('.dobby-mood');
         if (mood) {
             mood.innerHTML = this.getMoodIcon();
             mood.className = `dobby-mood ${this.game.state.dobbyMood}`;
         }
         
-        this.avatar.className = `dobby-avatar ${this.game.state.dobbyMood}`;
+        if (this.avatar) {
+            this.avatar.className = `dobby-avatar ${this.game.state.dobbyMood}`;
+        }
     }
     
     getMoodIcon() {

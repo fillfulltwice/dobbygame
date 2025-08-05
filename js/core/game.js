@@ -93,16 +93,16 @@ export class Game {
     }
     
     updateUI() {
-        if (this.components.ui) {
+        if (this.components.ui && this.components.ui.updateStats) {
             this.components.ui.updateStats();
         }
-        if (this.components.inventory) {
+        if (this.components.inventory && this.components.inventory.render) {
             this.components.inventory.render();
         }
-        if (this.components.shop) {
+        if (this.components.shop && this.components.shop.render) {
             this.components.shop.render();
         }
-        if (this.components.dobby) {
+        if (this.components.dobby && this.components.dobby.updateMood) {
             this.components.dobby.updateMood();
         }
     }
