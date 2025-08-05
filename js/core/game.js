@@ -42,20 +42,25 @@ export class Game {
             this.state.loadFromSave(savedData);
         }
         
-        // Initialize game components (NOT UI)
-        await this.components.inventory.init();
-        await this.components.crafting.init();
-        await this.components.shop.init();
-        await this.components.dobby.init();
-        
-        // НЕ вызываем checkDailyBonus здесь - переносим позже
         
         // Set up auto-save
         this.setupAutoSave(); 
         
         this.isInitialized = true;
         console.log('Game initialized successfully');
+        this.isInitialized = true;
+        console.log('Game initialized successfully');
     }
+    
+    // New method to initialize components when DOM is ready
+    async initComponents() {
+        await this.components.inventory.init();
+        await this.components.crafting.init();
+        await this.components.shop.init();
+        await this.components.dobby.init();
+    }
+    
+    
     
     setupAutoSave() {
         setInterval(() => {

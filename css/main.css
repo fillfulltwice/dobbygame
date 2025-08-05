@@ -192,6 +192,10 @@ body {
 .tab-content.active {
     display: block;
 }
+/* Специальный стиль для gameTab когда он активен */
+#gameTab.active {
+    display: grid;
+}
 
 /* Main Content Grid */
 #gameTab {
@@ -445,3 +449,287 @@ body {
 .gap-sm { gap: var(--space-sm); }
 .gap-md { gap: var(--space-md); }
 .gap-lg { gap: var(--space-lg); }
+/* Dobby Component Styles */
+.dobby-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.dobby-avatar {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4em;
+    position: relative;
+    transition: all var(--transition-normal);
+}
+
+.dobby-avatar.thinking {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.dobby-mood {
+    position: absolute;
+    top: -10px;
+    right: 30px;
+    font-size: 2.5em;
+    filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.dobby-bars {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+}
+
+.loyalty-bar, .trust-bar {
+    margin-bottom: var(--space-sm);
+}
+
+.bar-label {
+    font-size: 0.9em;
+    margin-bottom: 5px;
+    opacity: 0.9;
+}
+
+.bar-bg {
+    height: 20px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border-light);
+}
+
+.bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.chat-input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 1em;
+    transition: all var(--transition-normal);
+}
+
+.chat-input:focus {
+    outline: none;
+    background: var(--bg-lighter);
+    border-color: var(--gold);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+}
+
+.chat-button {
+    padding: 12px 24px;
+    width: 100%;
+}
+
+.chat-response {
+    min-height: 120px;
+    max-height: 200px;
+    overflow-y: auto;
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-sm);
+    font-size: 0.95em;
+    line-height: 1.6;
+}
+
+.treat-buttons {
+    display: flex;
+    gap: var(--space-sm);
+    margin-top: var(--space-md);
+}
+
+.dobby-request {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px solid var(--gold);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.request-text {
+    font-size: 0.95em;
+    margin-bottom: var(--space-sm);
+    font-style: italic;
+}
+
+.dobby-request-button {
+    padding: 8px 20px;
+    font-size: 0.9em;
+}
+
+/* Crafting Component Styles */
+.crafting-slots {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--space-md);
+    margin-bottom: var(--space-lg);
+}
+
+.craft-slot {
+    aspect-ratio: 1;
+    background: linear-gradient(135deg, var(--bg-lighter), rgba(255, 255, 255, 0.05));
+    border: 3px dashed var(--border-light);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+}
+
+.craft-slot:hover {
+    transform: scale(1.05);
+    border-color: var(--gold);
+    box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.craft-slot.filled {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+    border-style: solid;
+    border-color: var(--gold);
+}
+
+.slot-hint {
+    font-size: 2em;
+    opacity: 0.5;
+}
+
+.craft-button {
+    width: 100%;
+    padding: 15px;
+    font-size: 1.2em;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.crafting-hint {
+    text-align: center;
+    font-style: italic;
+    opacity: 0.8;
+    margin-top: var(--space-sm);
+}
+
+/* Inventory Filter Styles */
+.inventory-filters {
+    display: flex;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+    justify-content: center;
+}
+
+.inventory-filter {
+    padding: 8px 16px;
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-sm);
+    color: white;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-size: 0.9em;
+}
+
+.inventory-filter:hover {
+    background: var(--bg-lighter);
+    transform: translateY(-2px);
+}
+
+.inventory-filter.active {
+    background: linear-gradient(45deg, var(--gold), var(--gold-light));
+    color: #333;
+    border-color: var(--gold);
+}
+
+.inventory-search {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: var(--space-md);
+    background: var(--bg-light);
+    border: 2px solid var(--border-light);
+    border-radius: var(--radius-md);
+    color: white;
+    font-size: 0.95em;
+}
+
+.inventory-search:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: var(--bg-lighter);
+}
+
+.inventory-empty {
+    text-align: center;
+    padding: var(--space-xl);
+    opacity: 0.7;
+    font-style: italic;
+}
+
+/* Shop Component Styles */
+.shop-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+}
+
+.shop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-md);
+}
+
+.shop-coins {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: var(--gold);
+}
+
+.buy-button {
+    font-size: 0.8em;
+    padding: 5px 10px;
+    margin-top: 5px;
+}
+
+/* Специальный стиль для gameTab когда он активен */
+#gameTab.active {
+    display: grid;
+}

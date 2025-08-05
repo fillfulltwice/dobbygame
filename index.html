@@ -45,42 +45,10 @@
 
         <!-- Main Content -->
         <main id="mainContent">
-            <!-- Game Tab -->
-            <div id="gameTab" class="tab-content active main-content">
-                <!-- Inventory Panel -->
-                <div class="panel" id="inventory">
-                    <h3 class="panel-title" data-i18n="panels.inventory">📦 Инвентарь</h3>
-                    <div class="inventory-filters">
-                        <button class="inventory-filter active" data-category="all">Все</button>
-                        <button class="inventory-filter" data-category="basic">Базовые</button>
-                        <button class="inventory-filter" data-category="craftable">Созданные</button>
-                    </div>
-                    <input type="text" id="inventorySearch" class="inventory-search" placeholder="Поиск элементов...">
-                    <div class="inventory-grid" id="inventory-grid">
-                        <!-- Заполняется динамически -->
-                    </div>
-                </div>
-                
-                <!-- Crafting Panel -->
-                <div class="panel" id="crafting">
-                    <h3 class="panel-title" data-i18n="panels.crafting">🔨 Мастерская абсурда</h3>
-                    <div class="crafting-slots" id="crafting-slots">
-                        <!-- Заполняется динамически -->
-                    </div>
-                    <button class="btn btn-primary craft-button" id="craft-button" data-i18n="crafting.mix_button">
-                        ✨ Смешать безумие ✨
-                    </button>
-                    <div class="crafting-hint" id="crafting-hint"></div>
-                </div>
-                
-                <!-- Dobby Panel -->
-                <div class="panel" id="dobby">
-                    <h3 class="panel-title" data-i18n="panels.dobby">🐕 Dobby AI Assistant</h3>
-                    <div class="dobby-container">
-                        <!-- Заполняется динамически -->
-                    </div>
-                </div>
-            </div>
+          <!-- Game Tab -->
+          <div id="gameTab" class="tab-content active">
+            <!-- Содержимое будет заполнено динамически через createTabContent() -->
+        </div>
             
             <!-- Shop Tab -->
             <div id="shopTab" class="tab-content">

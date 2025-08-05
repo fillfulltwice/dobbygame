@@ -50,9 +50,15 @@ export class UI {
             tabsContainer.appendChild(tabBtn);
         });
         
-        // Создаем содержимое табов
-        this.createTabContent();
-    }
+      // Создаем содержимое табов
+      this.createTabContent();
+        
+      // Инициализируем компоненты после создания DOM
+      setTimeout(async () => {
+          // Инициализируем компоненты игры
+          await this.game.initComponents();
+      }, 100);
+  }
     
     createTabContent() {
         const gameTab = DOM.get('gameTab');
@@ -60,22 +66,28 @@ export class UI {
             gameTab.innerHTML = `
                 <div class="panel" id="inventory-panel">
                     <h3 class="panel-title">${t('panels.inventory')}</h3>
+                    <div class="inventory-filters">
+                        <button class="inventory-filter active" data-category="all">Все</button>
+                        <button class="inventory-filter" data-category="basic">Базовые</button>
+                        <button class="inventory-filter" data-category="craftable">Созданные</button>
+                    </div>
+                    <input type="text" id="inventorySearch" class="inventory-search" placeholder="Поиск элементов...">
                     <div id="inventory" class="inventory-grid">
                         <!-- Инвентарь будет заполнен динамически -->
                     </div>
                 </div>
                 
-                <div class="panel" id="production-panel">
-                    <h3 class="panel-title">${t('panels.production')}</h3>
-                    <div id="production" class="production-list">
-                        <!-- Производство будет заполнено динамически -->
+                <div class="panel" id="crafting-panel">
+                    <h3 class="panel-title">${t('panels.crafting')}</h3>
+                    <div id="crafting">
+                        <!-- Крафтинг будет заполнен динамически -->
                     </div>
                 </div>
                 
-                <div class="panel" id="resources-panel">
-                    <h3 class="panel-title">${t('panels.resources')}</h3>
-                    <div id="resources" class="resources-list">
-                        <!-- Ресурсы будут заполнены динамически -->
+                <div class="panel" id="dobby-panel">
+                    <h3 class="panel-title">${t('panels.dobby')}</h3>
+                    <div id="dobby" class="dobby-container">
+                        <!-- Dobby будет заполнен динамически -->
                     </div>
                 </div>
             `;
@@ -181,11 +193,18 @@ export class UI {
         switch (tabId) {
             case 'game':
                 this.updateInventory();
-                this.updateProduction();
-                this.updateResources();
+                // Обновляем другие компоненты игрового таба
+                if (this.game.components.crafting) {
+                    this.game.components.crafting.render();
+                }
+                if (this.game.components.dobby) {
+                    this.game.components.dobby.render();
+                }
                 break;
             case 'shop':
-                this.updateShop();
+                if (this.game.components.shop) {
+                    this.game.components.shop.render();
+                }
                 break;
             case 'tree':
                 this.updateSkillTree();
@@ -240,45 +259,13 @@ export class UI {
         if (this.game.components.inventory) {
             this.game.components.inventory.render();
         }
-        
-        inventoryContainer.innerHTML = '';
-        
-        Object.entries(this.game.player.inventory).forEach(([itemId, quantity]) => {
-            if (quantity > 0) {
-                const itemElement = DOM.create('div', 'inventory-item');
-                itemElement.innerHTML = `
-                    <div class="item-icon">${this.getItemIcon(itemId)}</div>
-                    <div class="item-name">${t(`items.${itemId}`)}</div>
-                    <div class="item-quantity">${Numbers.format(quantity)}</div>
-                `;
-                inventoryContainer.appendChild(itemElement);
-            }
-        });
     }
    
     updateProduction() {
         const productionContainer = DOM.get('production');
         if (productionContainer) {
             productionContainer.innerHTML = '<p>Система производства в разработке</p>';
-        
-    }
-        
-        productionContainer.innerHTML = '';
-        
-        Object.entries(this.game.player.production).forEach(([buildingId, data]) => {
-            if (data.count > 0) {
-                const productionElement = DOM.create('div', 'production-item');
-                productionElement.innerHTML = `
-                    <div class="building-icon">${this.getBuildingIcon(buildingId)}</div>
-                    <div class="building-info">
-                        <div class="building-name">${t(`buildings.${buildingId}`)}</div>
-                        <div class="building-count">${t('production.count')}: ${data.count}</div>
-                        <div class="building-rate">${t('production.rate')}: ${Numbers.format(data.rate)}/s</div>
-                    </div>
-                `;
-                productionContainer.appendChild(productionElement);
-            }
-        });
+        }
     }
     
     updateResources() {
@@ -286,60 +273,8 @@ export class UI {
         if (resourcesContainer) {
             resourcesContainer.innerHTML = '<p>Система ресурсов в разработке</p>';
         }
-        
-        resourcesContainer.innerHTML = '';
-        
-        Object.entries(this.game.player.resources).forEach(([resourceId, amount]) => {
-            if (amount > 0) {
-                const resourceElement = DOM.create('div', 'resource-item');
-                resourceElement.innerHTML = `
-                    <div class="resource-icon">${this.getResourceIcon(resourceId)}</div>
-                    <div class="resource-name">${t(`resources.${resourceId}`)}</div>
-                    <div class="resource-amount">${Numbers.format(amount)}</div>
-                `;
-                resourcesContainer.appendChild(resourceElement);
-            }
-        });
     }
     
-    updateShop() {
-        const shopContent = DOM.get('shop-content');
-        if (!shopContent) return;
-        
-        const activeCategory = DOM.get('.shop-category.active');
-        const category = activeCategory ? activeCategory.dataset.category : 'buildings';
-        
-        shopContent.innerHTML = '';
-        
-        const items = this.getShopItems(category);
-        items.forEach(item => {
-            const itemElement = DOM.create('div', 'shop-item');
-            const canAfford = this.game.player.canAfford(item.cost);
-            
-            itemElement.innerHTML = `
-                <div class="shop-item-icon">${item.icon}</div>
-                <div class="shop-item-info">
-                    <div class="shop-item-name">${t(item.nameKey)}</div>
-                    <div class="shop-item-description">${t(item.descKey)}</div>
-                    <div class="shop-item-cost">${this.formatCost(item.cost)}</div>
-                </div>
-                <button class="shop-buy-btn ${canAfford ? '' : 'disabled'}" 
-                        data-item="${item.id}" ${!canAfford ? 'disabled' : ''}>
-                    ${t('shop.buy')}
-                </button>
-            `;
-            
-            shopContent.appendChild(itemElement);
-        });
-        
-        // Добавляем обработчики для кнопок покупки
-        DOM.getAll('.shop-buy-btn').forEach(btn => {
-            DOM.on(btn, 'click', (e) => {
-                const itemId = e.target.dataset.item;
-                this.handleShopPurchase(itemId);
-            });
-        });
-    }
     
     initModals() {
         // Создаем базовую структуру модального окна
@@ -397,12 +332,7 @@ export class UI {
     }
     
     setupEventListeners() {
-        // Обработчики для категорий магазина
-        DOM.on(document, 'click', '.shop-category', (e) => {
-            DOM.getAll('.shop-category').forEach(cat => cat.classList.remove('active'));
-            e.target.classList.add('active');
-            this.updateShop();
-        });
+        // Обработчики для настроек
         
         // Обработчики для настроек
         const themeSelect = DOM.get('theme-select');
