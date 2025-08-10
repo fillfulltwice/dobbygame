@@ -8,6 +8,7 @@ export class Inventory {
         this.game = game;
         this.container = null;
         this.selectedElement = null;
+        this.tooltip = null;
     }
     
     async init() {
@@ -75,8 +76,8 @@ export class Inventory {
         if (sortedElements.length === 0) {
             const emptyMessage = DOM.create('div', 'inventory-empty');
             emptyMessage.textContent = lang === 'ru' 
-                ? 'Инвентарь пуст. Купите элементы в магазине!'
-                : 'Inventory is empty. Buy elements in the shop!';
+                ? 'Инвентарь пуст. Попроси Dobby подсказать рецепт или дай ему лакомство.'
+                : 'Inventory is empty. Ask Dobby for a recipe hint or give him a treat.';
             this.container.appendChild(emptyMessage);
         }
     }
@@ -86,6 +87,10 @@ export class Inventory {
         const item = DOM.create('div', 'element-item');
         item.dataset.elementId = id;
         item.dataset.category = element.category || 'other';
+        // Native tooltip with element name and optional description
+        const displayName = getElementName(id, lang);
+        const descr = (element.description && (element.description[lang] || element.description.en)) || '';
+        item.title = `${element.icon || ''} ${displayName}${descr ? ' — ' + descr : ''}`.trim();
         
         // Иконка
         const icon = DOM.create('div', 'element-icon', element.icon);
@@ -93,7 +98,7 @@ export class Inventory {
         
         // Название
         const name = DOM.create('div', 'element-name');
-        name.textContent = getElementName(id, lang);
+        name.textContent = displayName;
         item.appendChild(name);
         
         // Количество
@@ -103,6 +108,12 @@ export class Inventory {
         
         // Обработчик клика
         DOM.on(item, 'click', () => this.selectElement(id));
+
+        // Custom tooltip for reliable hover label
+        const content = `${element.icon || ''} ${displayName}${descr ? ' — ' + descr : ''}`.trim();
+        DOM.on(item, 'mouseenter', (e) => this.showTooltip(content, e));
+        DOM.on(item, 'mousemove', (e) => this.moveTooltip(e));
+        DOM.on(item, 'mouseleave', () => this.hideTooltip());
         
         // Анимация появления
         item.style.opacity = '0';
@@ -115,28 +126,57 @@ export class Inventory {
         
         return item;
     }
+
+    ensureTooltip() {
+        if (this.tooltip) return this.tooltip;
+        this.tooltip = DOM.create('div', 'game-tooltip');
+        document.body.appendChild(this.tooltip);
+        return this.tooltip;
+    }
+
+    showTooltip(text, e) {
+        const tip = this.ensureTooltip();
+        tip.textContent = text;
+        tip.style.display = 'block';
+        this.positionTooltip(e);
+    }
+
+    moveTooltip(e) {
+        if (!this.tooltip) return;
+        this.positionTooltip(e);
+    }
+
+    positionTooltip(e) {
+        const tip = this.tooltip;
+        if (!tip) return;
+        const offset = 12;
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+        const rect = tip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - offset;
+        if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - offset;
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+    }
+
+    hideTooltip() {
+        if (this.tooltip) this.tooltip.style.display = 'none';
+    }
     
     selectElement(elementId) {
         const element = this.game.state.elements[elementId];
         if (!element || element.count <= 0) return;
         
-        // Добавляем в слот крафта
+        // Добавляем в слот крафта, списывая 1 из инвентаря при успехе
         const added = this.game.components.crafting.addToSlot(elementId);
-        
         if (added) {
-            // Уменьшаем количество
-            element.count--;
-            
-            // Обновляем отображение
-            this.updateElementCount(elementId);
-            
-            // Анимация
-            const item = this.container.querySelector(`[data-element-id="${elementId}"]`);
-            if (item) {
-                Animation.Effects.shake(item, 200, 3);
+            if (this.game.state.elements[elementId] && this.game.state.elements[elementId].count > 0) {
+                this.game.state.elements[elementId].count--;
+                this.updateElementCount(elementId);
             }
-            
-            // Звук (если включен)
+            // Визуальная анимация выбора
+            const item = this.container.querySelector(`[data-element-id="${elementId}"]`);
+            if (item) Animation.Effects.shake(item, 200, 3);
             this.playSound('select');
         }
     }

@@ -8,6 +8,7 @@ export class Shop {
         this.container = null;
         this.shopItems = [];
         this.refreshInterval = null;
+        this.tooltip = null;
     }
     
     async init() {
@@ -21,36 +22,29 @@ export class Shop {
     
     generateShopItems() {
         this.shopItems = [];
-        
-        // Специальные предметы (всегда доступны)
-        this.shopItems.push(
-            { id: 'meat', icon: '🍖', price: 10, special: true },
-            { id: 'bone', icon: '🦴', price: 7, special: true }
-        );
-        
-        // Базовые элементы
-        const basicElements = ['fire', 'water', 'earth', 'air', 'light', 'darkness'];
-        basicElements.forEach(id => {
-            this.shopItems.push({
-                id,
-                icon: this.getElementIcon(id),
-                price: Numbers.random(5, 15),
-                category: 'basic'
-            });
-        });
-        
-        // Случайные элементы по уровню игрока
-        const availableElements = this.getAvailableElements();
-        const randomElements = Numbers.shuffle(availableElements).slice(0, 8);
-        
-        randomElements.forEach(id => {
-            this.shopItems.push({
-                id,
-                icon: this.getElementIcon(id),
-                price: this.calculatePrice(id),
-                category: this.getElementCategory(id)
-            });
-        });
+        const level = this.game.state.level;
+        // Всегда доступны (простые)
+        const always = [
+            { id: 'fire', price: 5 },
+            { id: 'water', price: 5 },
+            { id: 'earth', price: 5 },
+            { id: 'air', price: 5 },
+            { id: 'stone', price: 8 },
+            { id: 'book', price: 12 },
+            { id: 'meat', price: 10 },
+            { id: 'bone', price: 7 }
+        ];
+        always.forEach(({id, price}) => this.shopItems.push({ id, icon: this.getElementIcon(id), price }));
+
+        // Продвинутые (уровень 10+)
+        // остальные категории убраны по новой экономике
+
+        // Редкие (уровень 20+)
+        // rare removed
+
+        // Пакеты стартовых элементов
+        this.shopItems.push({ id: 'starter_pack_small', icon: '🎁', price: 25, bundle: { fire:1, water:1, earth:1, air:1 } });
+        this.shopItems.push({ id: 'starter_pack_big', icon: '🎁', price: 60, bundle: { fire:2, water:2, earth:2, air:2, egg:1, book:1 } });
     }
     
     getAvailableElements() {
@@ -107,7 +101,7 @@ export class Shop {
         // Кнопка обновления
         const refreshButton = DOM.create('button', 'btn btn-primary mt-md');
         refreshButton.innerHTML = '🔄 Обновить товары (Бесплатно)';
-        DOM.on(refreshButton, 'click', () => this.refresh());
+        DOM.on(refreshButton, 'click', (e) => { e.stopPropagation(); this.refresh(); });
         this.container.appendChild(refreshButton);
     }
     
@@ -141,6 +135,20 @@ export class Shop {
         });
         
         itemEl.appendChild(buyButton);
+
+        // Покупка по клику на карточку товара тоже
+        DOM.on(itemEl, 'click', () => this.buyItem(item));
+
+        // Всплывающая подсказка с названием (как в инвентаре)
+        const lang = getCurrentLanguage();
+        const displayName = this.getItemName(item);
+        const element = getElement(item.id);
+        const descr = (element && element.description && (element.description[lang] || element.description.en)) || '';
+        const tooltipText = `${element?.icon || ''} ${displayName}${descr ? ' — ' + descr : ''}`.trim();
+        itemEl.title = tooltipText; // нативный title
+        DOM.on(itemEl, 'mouseenter', (e) => this.showTooltip(tooltipText, e));
+        DOM.on(itemEl, 'mousemove', (e) => this.moveTooltip(e));
+        DOM.on(itemEl, 'mouseleave', () => this.hideTooltip());
         
         // Эффекты наведения
         itemEl.classList.add('hover-lift', 'hover-glow');
@@ -154,6 +162,20 @@ export class Shop {
             return;
         }
         
+        // Bundle support
+        if (item.bundle) {
+            if (!this.game.state.canAfford(item.price)) return;
+            this.game.state.coins -= item.price;
+            Object.entries(item.bundle).forEach(([id, count]) => {
+                if (!this.game.state.elements[id]) this.game.state.elements[id] = { count: 0, discovered: false };
+                this.game.state.elements[id].count += count;
+                if (!this.game.state.elements[id].discovered) this.game.state.elements[id].discovered = true;
+            });
+            this.game.updateUI();
+            this.game.components.ui.showFloatingText('🎁 Пакет куплен!');
+            return;
+        }
+
         const success = this.game.buyItem(item.id, item.price);
         
         if (success) {
@@ -168,19 +190,58 @@ export class Shop {
             this.render();
         }
     }
+
+    // --- Tooltip helpers (copy of inventory style) ---
+    ensureTooltip() {
+        if (this.tooltip) return this.tooltip;
+        this.tooltip = DOM.create('div', 'game-tooltip');
+        document.body.appendChild(this.tooltip);
+        return this.tooltip;
+    }
+
+    showTooltip(text, e) {
+        const tip = this.ensureTooltip();
+        tip.textContent = text;
+        tip.style.display = 'block';
+        this.positionTooltip(e);
+    }
+
+    moveTooltip(e) {
+        if (!this.tooltip) return;
+        this.positionTooltip(e);
+    }
+
+    positionTooltip(e) {
+        const tip = this.tooltip;
+        if (!tip) return;
+        const offset = 12;
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+        const rect = tip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - offset;
+        if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - offset;
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+    }
+
+    hideTooltip() {
+        if (this.tooltip) this.tooltip.style.display = 'none';
+    }
     
     refresh() {
+        // Полное обновление ассортимента (новый набор товаров)
+        this.shopItems = [];
         this.generateShopItems();
         this.render();
-        
         this.game.components.ui.showFloatingText('🔄 Товары обновлены!');
     }
     
     setupAutoRefresh() {
-        // Автообновление каждый час
+        // Автообновление каждые 30 минут
+        if (this.refreshInterval) clearInterval(this.refreshInterval);
         this.refreshInterval = setInterval(() => {
             this.refresh();
-        }, 3600000);
+        }, 1800000);
     }
     
     getItemName(item) {

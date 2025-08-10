@@ -2,6 +2,7 @@
 import { t, setLanguage, updatePageTranslations, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation, Numbers } from '../utils/helpers.js';
 import { getElement, getElementName } from '../data/elements.js';
+import { getAllRecipes } from '../data/recipes.js';
 
 export class UI {
     constructor(game) {
@@ -11,216 +12,76 @@ export class UI {
     }
     
     async init() {
-        this.initTabs();
+        // Simplified UI: no tabs, only core panels
+        this.renderSimplifiedLayout();
         this.initStats();
         this.initModals();
         this.initLanguageSwitcher();
-        // Откладываем setupEventListeners до полной инициализации DOM
         setTimeout(() => {
             this.setupEventListeners();
         }, 100);
         this.updateStats();
+        // Initialize components after DOM exists
+        setTimeout(async () => {
+            await this.game.initComponents();
+        }, 100);
     }
     
     initTabs() {
-        const tabsContainer = DOM.get('navigationTabs');
-        const mainContent = DOM.get('mainContent');
-        
-        if (!tabsContainer || !mainContent) return;
-        
-        // Создаем табы
-        const tabs = [
-            { id: 'game', icon: '🎮', key: 'tabs.game' },
-            { id: 'shop', icon: '🏪', key: 'tabs.shop' },
-            { id: 'tree', icon: '🌳', key: 'tabs.tree' },
-            { id: 'leaderboard', icon: '🏆', key: 'tabs.leaderboard' },
-            { id: 'settings', icon: '⚙️', key: 'tabs.settings' }
-        ];
-        
-        tabs.forEach(tab => {
-            const tabBtn = DOM.create('button', 'tab');
-            tabBtn.innerHTML = `${tab.icon} ${t(tab.key)}`;
-            tabBtn.dataset.tab = tab.id;
-            
-            if (tab.id === this.currentTab) {
-                tabBtn.classList.add('active');
-            }
-            
-            DOM.on(tabBtn, 'click', () => this.switchTab(tab.id));
-            tabsContainer.appendChild(tabBtn);
-        });
-        
-      // Создаем содержимое табов
-      this.createTabContent();
-        
-      // Инициализируем компоненты после создания DOM
-      setTimeout(async () => {
-          // Инициализируем компоненты игры
-          await this.game.initComponents();
-      }, 100);
-  }
+        // Deprecated in simplified UI
+    }
     
     createTabContent() {
+        // Deprecated in simplified UI
+    }
+
+    renderSimplifiedLayout() {
         const gameTab = DOM.get('gameTab');
-        if (gameTab) {
-            gameTab.innerHTML = `
-                <div class="panel" id="inventory-panel">
-                    <h3 class="panel-title">${t('panels.inventory')}</h3>
-                    <div class="inventory-filters">
-                        <button class="inventory-filter active" data-category="all">Все</button>
-                        <button class="inventory-filter" data-category="basic">Базовые</button>
-                        <button class="inventory-filter" data-category="craftable">Созданные</button>
-                    </div>
-                    <input type="text" id="inventorySearch" class="inventory-search" placeholder="Поиск элементов...">
-                    <div id="inventory" class="inventory-grid">
-                        <!-- Инвентарь будет заполнен динамически -->
-                    </div>
+        if (!gameTab) return;
+        gameTab.classList.add('active');
+        gameTab.innerHTML = `
+            <div class="panel" id="inventory-panel">
+                <h3 class="panel-title">${t('panels.inventory')}</h3>
+                <div class="inventory-filters">
+                    <button class="inventory-filter active" data-category="all">Все</button>
+                    <button class="inventory-filter" data-category="basic">Базовые</button>
+                    <button class="inventory-filter" data-category="craftable">Созданные</button>
                 </div>
-                
-                <div class="panel" id="crafting-panel">
-                    <h3 class="panel-title">${t('panels.crafting')}</h3>
-                    <div id="crafting">
-                        <!-- Крафтинг будет заполнен динамически -->
-                    </div>
+                <input type="text" id="inventorySearch" class="inventory-search" placeholder="Поиск элементов...">
+                <div id="inventory" class="inventory-grid"></div>
+            </div>
+
+            <div class="panel" id="dobby-panel">
+                <h3 class="panel-title">${t('panels.dobby')}</h3>
+                <div id="dobby" class="dobby-container"></div>
+                <div class="flex gap-sm mt-sm">
+                  <button id="openShopBtn" class="btn btn-primary">🏪 Открыть магазин</button>
+                  <button id="openTreeBtn" class="btn">🌳 Древо крафта</button>
                 </div>
-                
-                <div class="panel" id="dobby-panel">
-                    <h3 class="panel-title">${t('panels.dobby')}</h3>
-                    <div id="dobby" class="dobby-container">
-                        <!-- Dobby будет заполнен динамически -->
-                    </div>
-                </div>
-            `;
-        }
-        
-        const shopTab = DOM.get('shopTab');
-        if (shopTab) {
-            shopTab.innerHTML = `
-                <div class="shop-categories">
-                    <button class="shop-category active" data-category="buildings">${t('shop.buildings')}</button>
-                    <button class="shop-category" data-category="upgrades">${t('shop.upgrades')}</button>
-                    <button class="shop-category" data-category="resources">${t('shop.resources')}</button>
-                </div>
-                <div id="shop-content" class="shop-content">
-                    <!-- Содержимое магазина -->
-                </div>
-            `;
-        }
-        
-        const treeTab = DOM.get('treeTab');
-        if (treeTab) {
-            treeTab.innerHTML = `
-                <div class="skill-tree-container">
-                    <div id="skill-tree" class="skill-tree">
-                        <!-- Дерево навыков -->
-                    </div>
-                </div>
-            `;
-        }
-        
-        const leaderboardTab = DOM.get('leaderboardTab');
-        if (leaderboardTab) {
-            leaderboardTab.innerHTML = `
-                <div class="leaderboard-container">
-                    <h3>${t('leaderboard.title')}</h3>
-                    <div id="leaderboard-list" class="leaderboard-list">
-                        <!-- Список лидеров -->
-                    </div>
-                </div>
-            `;
-        }
-        
-        const settingsTab = DOM.get('settingsTab');
-        if (settingsTab) {
-            settingsTab.innerHTML = `
-                <div class="settings-container">
-                    <div class="setting-group">
-                        <label>${t('settings.language')}</label>
-                        <select id="language-select" class="setting-input">
-                            <option value="en">English</option>
-                            <option value="ru">Русский</option>
-                        </select>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label>${t('settings.theme')}</label>
-                        <select id="theme-select" class="setting-input">
-                            <option value="light">${t('settings.themes.light')}</option>
-                            <option value="dark">${t('settings.themes.dark')}</option>
-                            <option value="auto">${t('settings.themes.auto')}</option>
-                        </select>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label>${t('settings.autosave')}</label>
-                        <input type="checkbox" id="autosave-checkbox" class="setting-checkbox" checked>
-                    </div>
-                    
-                    <div class="setting-group">
-                        <label>${t('settings.notifications')}</label>
-                        <input type="checkbox" id="notifications-checkbox" class="setting-checkbox" checked>
-                    </div>
-                    
-                    <div class="setting-buttons">
-                        <button id="export-save" class="btn btn-secondary">${t('settings.export')}</button>
-                        <button id="import-save" class="btn btn-secondary">${t('settings.import')}</button>
-                        <button id="reset-game" class="btn btn-danger">${t('settings.reset')}</button>
-                    </div>
-                </div>
-            `;
-        }
+            </div>
+
+            <div class="panel" id="crafting-panel">
+                <h3 class="panel-title">${t('panels.crafting')}</h3>
+                <div id="crafting"></div>
+            </div>
+        `;
     }
     
     switchTab(tabId) {
-        // Убираем активный класс со всех табов
-        DOM.getAll('.tab').forEach(tab => tab.classList.remove('active'));
-        DOM.getAll('.tab-content').forEach(content => content.style.display = 'none');
-        
-        // Активируем выбранный таб
-        const activeTab = DOM.get(`[data-tab="${tabId}"]`);
-        const activeContent = DOM.get(`${tabId}Tab`);
-        
-        if (activeTab) activeTab.classList.add('active');
-        if (activeContent) activeContent.style.display = 'block';
-        
-        this.currentTab = tabId;
-        
-        // Обновляем содержимое активного таба
-        this.updateTabContent(tabId);
+        // No-op in simplified UI
+        this.currentTab = 'game';
     }
     
     updateTabContent(tabId) {
-        switch (tabId) {
-            case 'game':
-                this.updateInventory();
-                // Обновляем другие компоненты игрового таба
-                if (this.game.components.crafting) {
-                    this.game.components.crafting.render();
-                }
-                if (this.game.components.dobby) {
-                    this.game.components.dobby.render();
-                }
-                break;
-            case 'shop':
-                if (this.game.components.shop) {
-                    this.game.components.shop.render();
-                }
-                break;
-            case 'tree':
-                this.updateSkillTree();
-                break;
-            case 'leaderboard':
-                this.updateLeaderboard();
-                break;
-        }
+        // Always update core panels
+        this.updateInventory();
+        if (this.game.components.crafting) this.game.components.crafting.render();
+        if (this.game.components.dobby) this.game.components.dobby.render();
     }
     
     initStats() {
         const statsContainer = DOM.get('statsBar');
-        if (!statsContainer) {
-            console.error('Stats container not found');
-            return;
-        }
+        if (!statsContainer) return; // keep optional in simplified UI
         
         // Очищаем и заполняем контейнер статистики
         DOM.clear(statsContainer);
@@ -318,6 +179,97 @@ export class UI {
     hideModal() {
         this.modals.overlay.style.display = 'none';
     }
+
+    showShopModal() {
+        const containerId = 'shop';
+        const body = `<div class="panel" id="${containerId}">
+           <h3 class="panel-title">🏪 Магазин</h3>
+           <div class="shop-container"></div>
+        </div>`;
+        this.showModal('🏪 Магазин', body);
+        if (this.game.components.shop) {
+            this.game.components.shop.init();
+        }
+    }
+
+    showTreeModal() {
+        // Генерируем узлы по всем результатам из рецептов (поддержка форматов: объект или массив)
+        const lang = getCurrentLanguage();
+        const recipes = getAllRecipes();
+        let nodes = [];
+        if (Array.isArray(recipes)) {
+            nodes = Array.from(new Set(recipes.map(r => r.result)));
+        } else if (recipes && typeof recipes === 'object') {
+            // Merge all categories if present
+            Object.values(recipes).forEach(group => {
+                if (group && typeof group === 'object') {
+                    nodes.push(...Object.keys(group));
+                }
+            });
+            nodes = Array.from(new Set(nodes));
+        }
+        const discovered = this.game.state.elements || {};
+        const nodeHtml = nodes.map(id => {
+            const have = discovered[id]?.discovered;
+            const title = getElementName(id, lang);
+            const cls = have ? 'skill-node' : 'skill-node locked';
+            const icon = (getElement(id)?.icon) || '❓';
+            return `<div class="${cls}" data-eid="${id}" title="${title}">${icon}</div>`;
+        }).join('');
+        const tree = `<div class="skill-tree" id="craftTreeAll" style="display:flex;flex-wrap:wrap;gap:10px;max-height:60vh;overflow:auto;">${nodeHtml}</div>`;
+        this.showModal('🌳 Древо крафта (все рецепты)', tree);
+
+        // Подсказки с названием (как в инвентаре)
+        const container = this.modals.content.querySelector('#craftTreeAll');
+        if (container) {
+            const tipText = (id) => `${getElement(id)?.icon || ''} ${getElementName(id, lang)}`.trim();
+            container.querySelectorAll('.skill-node').forEach(node => {
+                const id = node.getAttribute('data-eid');
+                const text = tipText(id);
+                node.title = text;
+                node.addEventListener('mouseenter', (e) => this.showTooltip(text, e));
+                node.addEventListener('mousemove', (e) => this.moveTooltip(e));
+                node.addEventListener('mouseleave', () => this.hideTooltip());
+            });
+        }
+    }
+
+    // --- Tooltip helpers (shared) ---
+    ensureTooltip() {
+        if (this.tooltip) return this.tooltip;
+        this.tooltip = DOM.create('div', 'game-tooltip');
+        document.body.appendChild(this.tooltip);
+        return this.tooltip;
+    }
+
+    showTooltip(text, e) {
+        const tip = this.ensureTooltip();
+        tip.textContent = text;
+        tip.style.display = 'block';
+        this.positionTooltip(e);
+    }
+
+    moveTooltip(e) {
+        if (!this.tooltip) return;
+        this.positionTooltip(e);
+    }
+
+    positionTooltip(e) {
+        const tip = this.tooltip;
+        if (!tip) return;
+        const offset = 12;
+        let x = e.clientX + offset;
+        let y = e.clientY + offset;
+        const rect = tip.getBoundingClientRect();
+        if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - offset;
+        if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - offset;
+        tip.style.left = x + 'px';
+        tip.style.top = y + 'px';
+    }
+
+    hideTooltip() {
+        if (this.tooltip) this.tooltip.style.display = 'none';
+    }
     
     initLanguageSwitcher() {
         const languageSelect = DOM.get('language-select');
@@ -335,27 +287,11 @@ export class UI {
         // Обработчики для настроек
         
         // Обработчики для настроек
-        const themeSelect = DOM.get('theme-select');
-        if (themeSelect) {
-            DOM.on(themeSelect, 'change', (e) => {
-                this.changeTheme(e.target.value);
-            });
-        }
-        
-        const exportBtn = DOM.get('export-save');
-        if (exportBtn) {
-            DOM.on(exportBtn, 'click', () => this.exportSave());
-        }
-        
-        const importBtn = DOM.get('import-save');
-        if (importBtn) {
-            DOM.on(importBtn, 'click', () => this.importSave());
-        }
-        
-        const resetBtn = DOM.get('reset-game');
-        if (resetBtn) {
-            DOM.on(resetBtn, 'click', () => this.resetGame());
-        }
+        // No settings panel in simplified UI
+        const openShop = DOM.get('openShopBtn');
+        if (openShop) DOM.on(openShop, 'click', () => this.showShopModal());
+        const openTree = DOM.get('openTreeBtn');
+        if (openTree) DOM.on(openTree, 'click', () => this.showTreeModal());
     }
     
     changeTheme(theme) {
@@ -412,7 +348,7 @@ export class UI {
     
     updateAllContent() {
         this.updateStats();
-        this.updateTabContent(this.currentTab);
+        this.updateTabContent('game');
     }
     
     showNotification(message, type = 'info') {
@@ -589,7 +525,7 @@ export class UI {
     
     updateAllTranslations() {
         updatePageTranslations();
-        this.initTabs();
+        this.renderSimplifiedLayout();
         this.initStats();
         this.updateAllContent();
     }

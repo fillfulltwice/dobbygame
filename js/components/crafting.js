@@ -29,7 +29,7 @@ export class Crafting {
             slot.dataset.slotIndex = i;
             
             if (this.slots[i]) {
-                const element = this.game.elements[this.slots[i]];
+                const element = getElement(this.slots[i]);
                 if (element) {
                     slot.innerHTML = `
                         <div class="element-icon">${element.icon}</div>
@@ -54,6 +54,14 @@ export class Crafting {
         
         DOM.on(this.craftButton, 'click', () => this.craft());
         this.container.appendChild(this.craftButton);
+
+        // Hint area
+        let hint = this.container.querySelector('#craftingHint');
+        if (!hint) {
+            hint = DOM.create('div', 'crafting-hint');
+            hint.id = 'craftingHint';
+            this.container.appendChild(hint);
+        }
     }
     
     setupEventListeners() {
@@ -71,10 +79,11 @@ export class Crafting {
     
     clearSlot(index) {
         if (this.slots[index]) {
-            // Возвращаем элемент в инвентарь
+            // Возвращаем элемент в инвентарь при ручной очистке слота
             const elementId = this.slots[index];
-            this.game.state.addElement(elementId, 1);
-            
+            if (this.game.state.elements[elementId]) {
+                this.game.state.elements[elementId].count++;
+            }
             this.slots[index] = null;
             this.render();
             this.game.updateUI();
@@ -92,6 +101,8 @@ export class Crafting {
             this.game.components.ui.showFloatingText(t('crafting.min_elements'), true);
             return;
         }
+
+        // Не проверяем склад, так как при выборе из инвентаря уже списали 1 шт.
         
         // Анимация крафта
         this.craftButton.disabled = true;
@@ -101,16 +112,29 @@ export class Crafting {
         const success = this.game.craft(ingredients);
         
         if (success) {
-            // Очищаем слоты
+            // Ингредиенты уже списаны при помещении в слоты. Просто очищаем слоты
             this.slots = [null, null, null, null];
-            
-            // Эффект успеха
             Animation.Effects.createParticles(
                 this.container.offsetLeft + this.container.offsetWidth / 2,
                 this.container.offsetTop + this.container.offsetHeight / 2,
                 15,
                 '#FFD700'
             );
+            this.game.updateUI();
+            const hint = this.container.querySelector('#craftingHint');
+            if (hint) hint.textContent = t('crafting.success') || 'Успех!';
+        } else {
+            // На провал: возвращаем ингредиенты в инвентарь и очищаем слоты
+            ingredients.forEach(ing => {
+                if (this.game.state.elements[ing]) {
+                    this.game.state.elements[ing].count++;
+                }
+            });
+            this.slots = [null, null, null, null];
+            this.game.updateUI();
+            const names = ingredients.map(id => this.getElementName(id)).join(' + ');
+            const hint = this.container.querySelector('#craftingHint');
+            if (hint) hint.textContent = `Нет рецепта: ${names}`;
         }
         
         // Восстанавливаем кнопку
@@ -118,10 +142,11 @@ export class Crafting {
             this.craftButton.innerHTML = t('crafting.mix_button');
             this.craftButton.disabled = false;
             this.render();
+            this.game.updateUI();
         }, 1000);
     }
     
     getElementName(elementId) {
-        return this.game.getElementName ? this.game.getElementName(elementId) : elementId;
+        return getElementName(elementId, getCurrentLanguage());
     }
 }

@@ -316,14 +316,7 @@ setTimeout(() => {
             }
         }
         
-        // Переключение табов цифрами
-        if (e.key >= '1' && e.key <= '5' && !e.ctrlKey && !e.metaKey) {
-            const tabIds = ['game', 'shop', 'tree', 'leaderboard', 'settings'];
-            const tabIndex = parseInt(e.key) - 1;
-            if (tabIds[tabIndex]) {
-                this.ui.switchTab(tabIds[tabIndex]);
-            }
-        }
+        // Tabs removed in simplified UI
         
         // ESC для закрытия модальных окон
         if (e.key === 'Escape') {

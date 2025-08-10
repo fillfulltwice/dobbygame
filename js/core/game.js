@@ -5,8 +5,8 @@ import { getAllElements, getElement, getElementName } from '../data/elements.js'
 import { t, setLanguage, getCurrentLanguage } from '../data/translations.js';
 import { Inventory } from '../components/inventory.js';
 import { Crafting } from '../components/crafting.js';
-import { Shop } from '../components/shop.js';
 import { Dobby } from '../components/dobby.js';
+import { Shop } from '../components/shop.js';
 import { UI } from '../components/ui.js';
 import { Storage } from '../utils/storage.js';
 
@@ -56,8 +56,8 @@ export class Game {
     async initComponents() {
         await this.components.inventory.init();
         await this.components.crafting.init();
-        await this.components.shop.init();
         await this.components.dobby.init();
+        // Shop will render when opened
     }
     
     
@@ -100,6 +100,7 @@ export class Game {
             this.components.inventory.render();
         }
         if (this.components.shop && this.components.shop.render) {
+            // Render shop content if its container is present
             this.components.shop.render();
         }
         if (this.components.dobby && this.components.dobby.updateMood) {
@@ -108,14 +109,26 @@ export class Game {
     }
     
     craft(ingredients) {
-        const result = findRecipe(ingredients);
+        const recipe = findRecipe(ingredients);
         
-        if (result) {
+        if (recipe) {
+            const result = typeof recipe === 'string' ? recipe : recipe.result;
             // Successful craft
             const element = getElement(result);
             if (!element) {
                 console.error(`Element ${result} not found!`);
                 return false;
+            }
+            // оплатить стоимость рецепта
+            if (typeof recipe !== 'string' && recipe.cost) {
+                const { coins = 0, meat = 0, bone = 0 } = recipe.cost;
+                if (this.state.coins < coins || this.state.meat < meat || this.state.bones < bone) {
+                    this.components.ui.showFloatingText('Недостаточно ресурсов для рецепта', true);
+                    return false;
+                }
+                this.state.coins -= coins;
+                this.state.meat -= meat;
+                this.state.bones -= bone;
             }
             
             // Add element to inventory
@@ -146,12 +159,7 @@ export class Game {
             this.gainExp(expGain);
             this.state.coins += coinGain;
             
-            // Remove used ingredients
-            ingredients.forEach(ing => {
-                if (this.state.elements[ing]) {
-                    this.state.elements[ing].count--;
-                }
-            });
+            // Списание ингредиентов теперь выполняется в компоненте Crafting на успех
             
             // Show success message
             const elementName = getElementName(result, getCurrentLanguage());
@@ -163,14 +171,6 @@ export class Game {
         } else {
             // Failed craft
             this.components.ui.showCraftResult(false);
-            
-            // Return ingredients
-            ingredients.forEach(ing => {
-                if (this.state.elements[ing]) {
-                    this.state.elements[ing].count++;
-                }
-            });
-            
             return false;
         }
     }
@@ -375,9 +375,9 @@ reset() {
 }
 
 destroy() {
-    if (this.components.shop) {
-        this.components.shop.destroy();
-    }
+        if (this.components.shop) {
+            this.components.shop.destroy();
+        }
 }
 
 getState() {

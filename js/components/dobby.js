@@ -2,6 +2,7 @@
 import { t, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation } from '../utils/helpers.js';
 import { FireworksAPI } from '../utils/api.js';
+import { getRecipeHint } from '../data/recipes.js';
 
 export class Dobby {
     constructor(game) {
@@ -31,7 +32,7 @@ export class Dobby {
         
         // Аватар Dobby
         this.avatar = DOM.create('div', 'dobby-avatar');
-        this.avatar.innerHTML = '🐕';
+        this.avatar.innerHTML = '<img src="assets/dobby-wizard.png" alt="Dobby" class="dobby-avatar-img"/>';
         this.container.appendChild(this.avatar);
         
         // Индикатор настроения
@@ -39,7 +40,7 @@ export class Dobby {
         mood.innerHTML = this.getMoodIcon();
         this.container.appendChild(mood);
         
-        // Полосы лояльности и доверия
+        // Полосы лояльности и доверия (kept minimal)
         this.renderBars();
         
         // Чат
@@ -48,7 +49,7 @@ export class Dobby {
         // Кнопки лакомств
         this.renderTreatButtons();
         
-        // Запросы Dobby
+        // Упрощение: опционально показывать текущий запрос
         this.renderCurrentRequest();
     }
     
@@ -84,6 +85,35 @@ export class Dobby {
     
     renderChat() {
         const chatContainer = DOM.create('div', 'chat-container');
+
+        // API key banner if missing
+        if (!this.api.hasApiKey()) {
+            const apiBanner = DOM.create('div', 'api-key-banner');
+            apiBanner.innerHTML = `
+                <div class="api-key-title">🔑 ${t('messages.api_key_required') || 'Требуется API ключ Fireworks'}</div>
+                <div class="api-key-row">
+                    <input type="password" id="apiKeyInput" class="api-key-input" placeholder="Fireworks API Key">
+                    <button class="btn btn-primary api-key-save">${t('common.save') || 'Сохранить'}</button>
+                </div>
+                <div class="api-key-hint">${t('messages.api_key_hint') || 'Ключ хранится локально в браузере. Можно пропустить, я буду давать локальные подсказки.'}</div>
+            `;
+            const saveBtn = apiBanner.querySelector('.api-key-save');
+            const keyInput = apiBanner.querySelector('#apiKeyInput');
+            if (saveBtn && keyInput) {
+                DOM.on(saveBtn, 'click', () => {
+                    const key = keyInput.value.trim();
+                    if (key) {
+                        this.api.setApiKey(key);
+                        apiBanner.remove();
+                        this.showMessage(t('messages.api_key_saved') || 'API ключ сохранён!');
+                    }
+                });
+                DOM.on(keyInput, 'keypress', (e) => {
+                    if (e.key === 'Enter') saveBtn.click();
+                });
+            }
+            chatContainer.appendChild(apiBanner);
+        }
         
         // Поле ввода
         this.chatInput = DOM.create('input', 'chat-input');
@@ -151,15 +181,7 @@ export class Dobby {
         const message = this.chatInput.value.trim();
         this.chatInput.value = '';
         
-        // Проверяем API ключ
-        if (!this.api.hasApiKey()) {
-            const apiKey = prompt(t('messages.api_key_required'));
-            if (apiKey) {
-                this.api.setApiKey(apiKey);
-            } else {
-                return;
-            }
-        }
+        const haveApi = this.api.hasApiKey();
         
         this.isThinking = true;
         this.chatResponse.innerHTML = t('dobby.thinking');
@@ -175,16 +197,20 @@ export class Dobby {
                 currentLanguage: getCurrentLanguage(),
                 allRecipes: this.getAllRecipesString()
             };
-            
-            const response = await this.api.askDobby(message, context);
-            
+
+            let responseText = '';
+            if (haveApi) {
+                responseText = await this.api.askDobby(message, context);
+            } else {
+                responseText = this.generateLocalResponse(message, context);
+            }
+
             // Обновляем статистику
             this.game.state.conversationCount++;
             this.game.state.trust = Math.min(100, this.game.state.trust + 2);
-            
-            this.showMessage(response);
+
+            this.showMessage(responseText);
             this.updateMood();
-            
         } catch (error) {
             console.error('Dobby API error:', error);
             this.showMessage(t('messages.api_error'));
@@ -193,6 +219,24 @@ export class Dobby {
         this.isThinking = false;
         this.avatar.classList.remove('thinking');
         this.game.updateUI();
+    }
+
+    generateLocalResponse(message, context) {
+        const lang = context.currentLanguage;
+        const lower = message.toLowerCase();
+        // Try to hint a recipe if user mentions an element name
+        const maybeElement = lower.match(/[a-z_]+|[а-яё_]+/i)?.[0];
+        if (maybeElement) {
+            const hint = getRecipeHint(maybeElement, context.trust);
+            if (hint) {
+                return lang === 'ru'
+                    ? `Гав-гав! Без ключа API я шёпну загадку: ${hint.ru}`
+                    : `Woof! No API key, but here's a riddle: ${hint.en}`;
+            }
+        }
+        return lang === 'ru'
+            ? 'Гав! Дай мне 🍖 или спроси о рецептах. (Совет: можно ввести API ключ позже, я всё равно буду подсказывать!)'
+            : 'Woof! Give me a 🍖 or ask about recipes. (Tip: you can add an API key later, I will still hint!)';
     }
     
     showMessage(message) {
