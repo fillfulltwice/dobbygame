@@ -1,4 +1,3 @@
-// js/core/game.js
 import { GameState } from './state.js';
 import { getAllRecipes, findRecipe } from '../data/recipes.js';
 import { getAllElements, getElement, getElementName } from '../data/elements.js';
@@ -18,11 +17,10 @@ export class Game {
             crafting: new Crafting(this),
             shop: new Shop(this),
             dobby: new Dobby(this),
-            ui: null // Will be set by app.js
+            ui: null // app.js потому что!
         };
         
         this.isInitialized = false;
-        // Добавь эти строки после строки 23
         this.player = {
             inventory: {},
             production: {},
