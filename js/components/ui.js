@@ -1,4 +1,3 @@
-// js/components/ui.js
 import { t, setLanguage, updatePageTranslations, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation, Numbers } from '../utils/helpers.js';
 import { getElement, getElementName } from '../data/elements.js';
@@ -12,7 +11,6 @@ export class UI {
     }
     
     async init() {
-        // Simplified UI: no tabs, only core panels
         this.renderSimplifiedLayout();
         this.initStats();
         this.initModals();
@@ -21,18 +19,15 @@ export class UI {
             this.setupEventListeners();
         }, 100);
         this.updateStats();
-        // Initialize components after DOM exists
         setTimeout(async () => {
             await this.game.initComponents();
         }, 100);
     }
     
     initTabs() {
-        // Deprecated in simplified UI
     }
     
     createTabContent() {
-        // Deprecated in simplified UI
     }
 
     renderSimplifiedLayout() {
@@ -68,7 +63,6 @@ export class UI {
     }
     
     switchTab(tabId) {
-        // No-op in simplified UI
         this.currentTab = 'game';
     }
     
@@ -284,10 +278,8 @@ export class UI {
     }
     
     setupEventListeners() {
-        // Обработчики для настроек
         
         // Обработчики для настроек
-        // No settings panel in simplified UI
         const openShop = DOM.get('openShopBtn');
         if (openShop) DOM.on(openShop, 'click', () => this.showShopModal());
         const openTree = DOM.get('openTreeBtn');
