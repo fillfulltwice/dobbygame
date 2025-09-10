@@ -1,4 +1,3 @@
-// js/components/inventory.js
 import { getElement, getElementName } from '../data/elements.js';
 import { getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation } from '../utils/helpers.js';
@@ -87,7 +86,6 @@ export class Inventory {
         const item = DOM.create('div', 'element-item');
         item.dataset.elementId = id;
         item.dataset.category = element.category || 'other';
-        // Native tooltip with element name and optional description
         const displayName = getElementName(id, lang);
         const descr = (element.description && (element.description[lang] || element.description.en)) || '';
         item.title = `${element.icon || ''} ${displayName}${descr ? ' — ' + descr : ''}`.trim();
@@ -267,8 +265,6 @@ export class Inventory {
     
     playSound(type) {
         if (this.game.state.settings.sound) {
-            // Здесь будет воспроизведение звука
-            // Audio API implementation
         }
     }
     
