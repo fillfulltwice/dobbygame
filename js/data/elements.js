@@ -1,4 +1,3 @@
-// js/data/elements.js
 export const ELEMENTS = {
     // Базовые элементы (даются в начале)
     basic: {
