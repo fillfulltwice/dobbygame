@@ -1,4 +1,3 @@
-// js/data/recipes.js
 export const RECIPES = {
     // Only simplified basic list is used now; other categories cleared
     basic: {
