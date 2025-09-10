@@ -1,4 +1,3 @@
-// js/core/state.js
 import { CONFIG } from './config.js';
 
 export class GameState {
