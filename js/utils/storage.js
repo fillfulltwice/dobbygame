@@ -1,4 +1,3 @@
-// js/utils/storage.js
 import { CONFIG } from '../core/config.js';
 
 export class Storage {
