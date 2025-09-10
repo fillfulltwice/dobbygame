@@ -1,4 +1,3 @@
-// js/core/app.js
 import { Game } from './game.js';
 import { UI } from '../components/ui.js';
 import { EventSystem } from './events.js';
