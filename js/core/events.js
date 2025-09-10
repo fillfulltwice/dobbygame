@@ -1,5 +1,3 @@
-// js/core/events.js
-
 export class EventSystem {
     constructor() {
         this.events = {};
