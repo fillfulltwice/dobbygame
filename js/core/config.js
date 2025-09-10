@@ -1,5 +1,3 @@
-// js/core/config.js
-
 export const CONFIG = {
     // Начальные значения
     INITIAL_STATE: {
