@@ -1,4 +1,3 @@
-// js/data/translations.js
 export const TRANSLATIONS = {
     ru: {
         game: {
