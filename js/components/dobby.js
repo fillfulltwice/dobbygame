@@ -1,4 +1,3 @@
-// js/components/dobby.js
 import { t, getCurrentLanguage } from '../data/translations.js';
 import { DOM, Animation } from '../utils/helpers.js';
 import { FireworksAPI } from '../utils/api.js';
@@ -26,9 +25,7 @@ export class Dobby {
     render() {
         if (!this.container) return; // 🛡️ Защита от вызова до инициализации
         
-        DOM.clear(this.container);
-        // ... остальной код ...
-    
+        DOM.clear(this.container);    
         
         // Аватар Dobby
         this.avatar = DOM.create('div', 'dobby-avatar');
@@ -54,7 +51,7 @@ export class Dobby {
     }
     
     setupEventListeners() {
-        // Обработчики уже добавлены в render()
+
     }
 
     renderBars() {
@@ -341,7 +338,6 @@ export class Dobby {
     }
     
     getAllRecipesString() {
-        // Здесь должен быть список всех рецептов для AI
         return `
         fire + water = steam
         water + air = ice
